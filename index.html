@@ -7,7 +7,6 @@
 		<title>Codeforces Tool</title>
 	</head>
 	<body>
-
 		<nav class="navbar navbar-default">
 			<div class="container">
 				<div class="navbar-header">
@@ -24,9 +23,21 @@
 			</div>
 			<div class="page-header">
 				<div class="form-inline">
-					<label for="user">User ID:</label>
-					<input type="text" id="user" class="form-control">
-					<button class="btn btn-info" type="button" id="user-btn">OK</button>
+					<label for="handle">Handle:</label>
+					<input type="text" id="handle" class="form-control" placeholder="Handle">
+					<label for="problemIDorder">問題ID</label>
+					<select id="problemIDorder" class="form-control">
+						<option value="default"></option>
+						<option value="asc">昇順</option>
+						<option value="desc">降順</option>
+					</select>
+					<!--<label for="solvedorder">solved数</label>
+					<select id="solvedorder" class="form-control">
+						<option value="default"></option>
+						<option value="asc">昇順</option>
+						<option value="desc">降順</option>
+					</select>-->
+					<button class="btn btn-info" type="button" id="handle-btn">OK</button>
 				</div>
 			</div>
 
@@ -37,7 +48,7 @@
 						<td>問題名</td>
 						<td>solved数</td>
 					</thead>
-					<tbody>
+					<tbody id="table-body">
 					</tbody>
 				</table>
 			</div>
