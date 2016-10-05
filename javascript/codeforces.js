@@ -2,10 +2,12 @@ $(document).ready(function ()
 {
 	var params = getQueryStr();
 	var next_params = {'handle' : "", 'from' : "1",'count' : "5000"};
-	if(params["user"]){
-		next_params['handle'] = params["user"];
+	if(params["handle"]){
+		next_params['handle'] = params["handle"];
 	}
-	$("#user").val(next_params["handle"]);
+	$("#handle").val(params["handle"]);
+	$("#problemIDorder").val(params["problemIDorder"]);
+	$("#solvedorder").val(params["solvedorder"]);
 	showProblems(next_params);
 });
 
@@ -16,7 +18,8 @@ function getQueryStr(){
 	if(queryStr.length > 0){
 		queryStr = queryStr.substring(1);
 		var params = queryStr.split("&");
-		for(var i = 0;i < params.length;i++){
+		var len = params.length;
+		for(var i = 0;i < len;i++){
 			var query = params[i].split("=");
 			var paramKey = decodeURIComponent(query[0]);
 			var paramValue = decodeURIComponent(query[1]);
@@ -26,18 +29,25 @@ function getQueryStr(){
 	return ret;
 }
 
-$("#user-btn").click(function(){
-	var userid = $("#user").val();
-	window.location.href = window.location.href.split("?")[0] + "?user=" + userid;
+$("#handle-btn").click(function(){
+	var handle = $("#handle").val();
+	var problemID_order = $("#problemIDorder").val();
+	var solved_order = $("#solvedorder").val();
+	window.location.href = window.location.href.split("?")[0] 
+		+ "?handle=" + handle 
+		+ "&problemIDorder=" + problemID_order 
+		+ "&solvedorder=" + solved_order;
 });
 
 function getAccepted(submission_json){
 	var accepted = {};
-	for(var i = 0;i < submission_json['result'].length;i++){
+	var len = submission_json['result'].length;
+	for(var i = 0;i < len;i++){
 		var submission = submission_json['result'][i];
 		var contestId = submission['contestId'];
 		var index = submission['problem']['index'];
 		var key = contestId + index;
+		
 		if(submission['verdict'] == 'OK'){
 			accepted[key] = 'OK';
 		}else if(accepted[key] != 'OK'){
@@ -53,7 +63,9 @@ function getRows(problems_json,problemStatistics_json,accepted){
 	var statusURL = "http://codeforces.com/problemset/status/";
 
 	var rows = [];
-	for(var i = 0;i < problems_json[0].length;i++){
+	var len = problems_json[0].length;
+	var ret = "";
+	for(var i = 0;i < len;i++){
 		var problem = problems_json[0][i];
 
 		var name = problem.name;
@@ -70,13 +82,27 @@ function getRows(problems_json,problemStatistics_json,accepted){
 		}else if(accepted[id + index] == 'NG'){
 			color = "class=\"warning\"";
 		}
-		var problemID_col = "<td><a href=\""+problemURL + id +"/"+ index +"\">"+ id + index +"</a></td>";
-		var problemName_col = "<td><a href=\""+problemURL + id +"/"+ index + "\">"+name +"</a></td>"; 
-		var solvedCount_col = "<td>"+"<a href=\""+statusURL + id +"/problem/"+ index +"\">" + solved +"</a></td>";
-		rows.push("<tr "+color+">"+problemID_col + problemName_col + solvedCount_col +"</tr>");
+		ret += "<tr "+color+">"+
+		"<td><a href=\""+problemURL + id +"/"+ index +"\"target=\"_blank\">"+ id + index +"</a></td>" + 
+		"<td><a href=\""+problemURL + id +"/"+ index + "\"target=\"_blank\">"+name +"</a></td>" +  
+		"<td>"+"<a href=\""+statusURL + id +"/problem/"+ index +"\"target=\"_blank\">" + solved +"</a></td>" + "</tr>";
 	}
-	return rows;
+	return ret;
 }
+
+ /*function orderSort(rows){
+
+ 	var problemID_order = $('#problemIDorder').val();
+ 	//var solved_order = $('#solvedorder').val();
+
+ 	if(problemID_order == "asc"){
+ 		
+ 	}else if(problemID_order == "desc"){
+
+ 	}
+
+ 	return rows;
+ }*/
 
 function showProblems(params){
 	$.when(
@@ -93,15 +119,12 @@ function showProblems(params){
 				}
 
 				var rows = getRows(problems_json,problemStatistics_json,accepted);
-				for(var i = 0;i < rows.length;i++){
-					$('tbody').prepend(rows[i]);
-				}
+				//rows = orderSort(rows);
+				$('#table-body').append(rows);
 			});
 		}else{
 			var rows = getRows(problems_json,problemStatistics_json,{});
-			for(var i = 0;i < rows.length;i++){
-				$('tbody').prepend(rows[i]);
-			}
+			$('#table-body').append(rows);
 		}
 	});
 }
