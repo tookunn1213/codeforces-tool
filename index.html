@@ -1,72 +1,57 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset='utf-8'>
-		
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-		<title>Codeforces Tool</title>
-	</head>
-	<body>
-		<nav class="navbar navbar-default">
-			<div class="container">
-				<div class="navbar-header">
-					<a class="navbar-brand" href="./">Codeforces Tool</a>
-				</div>
-				<ul class="nav navbar-nav">
-				</ul>
-			</div>
-		</nav>
+    <head>
+        <meta charset='utf-8'>
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/codeforces-tool.css">
+        <title>Codeforces Tool</title>
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="./">Codeforces Tool</a>
+                </div>
+                <ul class="nav navbar-nav">
+                </ul>
+            </div>
+        </nav>
 
-		<div class="container">
-			<div class="page-header">
-				<h1>Problemset</h1>
-			</div>
-			<form>
-				<div class="form-inline form-group">
-					<label for="handle">Handle:</label>
-					<input type="text" id="handle" class="form-control" placeholder="Handle">
-					<!--<label for="problemIDorder">問題ID</label>
-					<select id="problemIDorder" class="form-control">
-						<option value="default">なし</option>
-						<option value="asc">昇順</option>
-						<option value="desc">降順</option>
-					</select>
-					<label for="solvedorder">solved数</label>
-					<select id="solvedorder" class="form-control">
-						<option value="default">なし</option>
-						<option value="asc">昇順</option>
-						<option value="desc">降順</option>
-					</select> -->
-				</div>
-				<div class="form-inline form-group">
-					<label>タグ:</label>
-					<input type="button" id="tag-check-btn" class="btn btn-primary" value="すべてのタグをチェックをする">
-					<input type="button" id="tag-nocheck-btn" class="btn btn-danger" value="すべてのタグのチェックをはずす"
-					<br>
-					<ul id="tag-list" class="list-inline">
-					</ul>
-				</div>
-				<div class="form-inline form-group">
-					<button class="btn btn-success" type="button" id="handle-btn">Accpepted</button>
-				</div>
-			</form>
+        <div class="container">
+            <div class="page-header">
+                <h1>Problemset</h1>
+            </div>
+            <form>
+                <div class="form-inline form-group">
+                    <label for="handle">Handle:</label>
+                    <input type="text" id="handle" name="handle" class="form-control" placeholder="Handle">
+                </div>
+                <div class="form-inline form-group">
+                    <label>Tag:</label>
+                    <ul id="tag-list" class="list-inline"></ul>
+                </div>
+                <div class="form-inline form-group">
+                    <button class="btn btn-default" type="button" id="btn-search">Search</button>
+                </div>
+            </form>
 
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered table-hover">
-					<thead>
-						<td>問題ID</td>
-						<td>問題名</td>
-						<td>solved数</td>
-						<td>タグ</td>
-					</thead>
-					<tbody id="table-body">
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="./javascript/codeforces.js"></script>
-	</body>
-	
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <th>ProblemID</th>
+                        <th>Problem</th>
+                        <th>Solved</th>
+                        <th>Tags</th>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="./javascript/codeforces.js"></script>
+    </body>
+    
 </html>
