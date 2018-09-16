@@ -28,6 +28,17 @@
                     <input type="text" id="handle" name="handle" class="form-control" placeholder="Handle">
                 </div>
                 <div class="form-inline form-group">
+                    <div class="radio-tag-block">
+                        <label>Select tag mode: </label>
+                        <label id="label-radio-or-tag" class="label-radio-tag">
+                            <span>OR</span>
+                            <input type="radio" id="radio-or-tag" value="or" class="form-control radio-tag" name="tag_mode">
+                        </label>
+                        <label id="label-radio-and-tag" class="label-radio-tag">
+                            <span>AND</span>
+                            <input type="radio" id="radio-and-tag" value="and" class="form-control radio-tag" name="tag_mode">
+                        </label>
+                    </div>
                     <label>Tag:</label>
                     <ul id="tag-list" class="list-inline"></ul>
                 </div>

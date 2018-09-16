@@ -1,10 +1,18 @@
 $(document).ready(function() {
     let params = getQueryString();
     let api_params = {
-        'handle' : "",
-        'from' : "1",
-        'count' : "5000"
+        'handle':   "",
+        'from'  :   "1",
+        'count' :   "5000",
     };
+
+    // select tag mode
+    let tag_mode = params['tag_mode'];
+    if (tag_mode === "and") {
+        checkedAndTag();
+    } else {
+        checkedOrTag();
+    }
 
     if (params['handle']) {
         api_params['handle'] = params['handle'];
@@ -21,7 +29,7 @@ $(document).ready(function() {
     }
 
     showAllTag(checked_tags);
-    showProblems(api_params, checked_tags);
+    showProblems(api_params, checked_tags, tag_mode);
 });
 
 function getQueryString() {
@@ -32,9 +40,10 @@ function getQueryString() {
         let get_params = query_str.substring(1).split("&");
 
         get_params.forEach(function(get_param) {
-            let param = get_param.split("=");
-            let name = param[0];
-            let value = param[1];
+            let param       = get_param.split("=");
+            let name        = param[0];
+            let value       = param[1];
+
             retParam[name] = value;
         });
     }
@@ -46,25 +55,24 @@ function showAllTag(checked_tags) {
     $.when(
         $.getJSON("./json/problem_tags.json")
     ).done(function(problem_tags_json) {
-        let tags = problem_tags_json['tags'];
-        let tag_list = $("#tag-list");
+        let tags        = problem_tags_json['tags'];
+        let tag_list    = $("#tag-list");
 
         tags.forEach(function(tag) {
-            let tag_name = tag.replace(/ /g, "_");
-
-            let $li = $("<li></li>", {
+            let tag_name    = tag.replace(/ /g, "_");
+            let $li         = $("<li></li>", {
                 class: "theme-color",
             });
-            let $label = $("<label></label>");
-            $label.text(tag);
-            let $checkbox = $("<input>", {
-                type: "checkbox",
-                id: "tag-" + tag_name,
-                class: "form-control tag",
-                name: "tagName",
-                value: tag_name,
+            let $label      = $("<label></label>");
+            let $checkbox   = $("<input>", {
+                type:   "checkbox",
+                id:     "tag-" + tag_name,
+                class:  "form-control tag",
+                name:   "tagName",
+                value:  tag_name,
             });
 
+            $label.text(tag);
             $li.append($label);
             $li.append($checkbox);
             tag_list.append($li);
@@ -100,11 +108,21 @@ function makeTagName(delim) {
     return tag_list.join(delim);
 }
 
+function getTagMode() {
+    if ($("#radio-or-tag").is(":checked")) {
+        return $("#radio-or-tag").val();
+    } else {
+        return $("#radio-and-tag").val();
+    }
+}
+
 $("#btn-search").on("click", function(){
-    let handle = $("#handle").val();
-    let tag_params = makeTagName(',');
+    let handle      = $("#handle").val();
+    let tag_mode    = getTagMode();
+    let tag_params  = makeTagName(',');
+
     window.location.href = window.location.href.split("?")[0] 
-        + `?handle=${handle}&tagName=${tag_params}`;
+        + `?handle=${handle}&tag_mode=${tag_mode}&tagName=${tag_params}`;
 })
 
 function getAccepted(submission_json) {
@@ -117,41 +135,68 @@ function getAccepted(submission_json) {
         let key         = contest_id + index;
 
         if (submission['verdict'] === "OK") {
-            accepted[key] = 'OK';
+            accepted[key] = "OK";
         } else if(accepted[key] !== "OK") {
-            accepted[key] = 'NG';
+            accepted[key] = "NG";
         }
     });
 
     return accepted;
 }
 
-function getRows(problems_json, problem_statistics_json, accepted, tags_params) {
+function matchTags(tags_params, tags, tag_mode) {
+
+    if (tag_mode === "and") {
+        let ok = true;
+
+        if (tags_params.size !== tags.length) {
+            return false;
+        }
+
+        tags.forEach(function(tag){
+            replaced = tag.replace(/ /g, "_");
+            has = tags_params.has(replaced);
+            ok = ok && has;
+        });
+
+        return ok;
+    } else {
+        let ok = false;
+
+        tags.forEach(function(tag){
+            replaced = tag.replace(/ /g, "_");
+            has = tags_params.has(replaced);
+    
+            ok = ok || has;
+        });
+
+        return ok;
+    }
+}
+
+function getRows(problems_json, problem_statistics_json, accepted, tags_params, tag_mode) {
     let problem_URL = "http://codeforces.com/problemset/problem/";
-    let status_URL = "http://codeforces.com/problemset/status/";
+    let status_URL  = "http://codeforces.com/problemset/status/";
 
     let ret = "";
     for (let i = 0;i < problems_json[0].length;i++) {
         let problem = problems_json[0][i];
 
-        let name = problem.name;
-        let id = problem.contestId;
-        let index = problem.index;
-        let solved = problem_statistics_json[0][i].solvedCount;
-        let tags = problem.tags;
-        let color = "";
+        let name    = problem.name;
+        let id      = problem.contestId;
+        let index   = problem.index;
+        let solved  = problem_statistics_json[0][i].solvedCount;
+        let tags    = problem.tags;
+        let color   = "";
 
         if (tags_params.size > 0 && tags.length == 0) {
             continue;
         }
 
-        let flag = false;
-        for (let j = 0;j < tags.length;j++) {
-            replaced_tag = tags[j].replace(/ /g,'_');
-            flag |= tags_params.has(replaced_tag);
-        }
+        let match = matchTags(tags_params, tags, tag_mode);
+        console.log(tag_mode);
 
-        if (!flag && tags.length > 0) {
+        if (!match && tags.length > 0) {
             continue;
         }
 
@@ -164,12 +209,11 @@ function getRows(problems_json, problem_statistics_json, accepted, tags_params) 
         }
 
         ret += "<tr "+color+">"+
-        "<td><a href=\""+problem_URL + id +"/"+ index +"\" target=\"_blank\">"+ id + index +"</a></td>" + 
-        "<td><a href=\""+problem_URL + id +"/"+ index + "\" target=\"_blank\">"+name +"</a></td>" +  
-        "<td>"+"<a href=\""+status_URL + id +"/problem/"+ index +"\" target=\"_blank\">" + solved +"</a></td>";
+        "<td><a href=\""+ problem_URL + id + "/" + index + "\" target=\"_blank\">" + id + index + "</a></td>" + 
+        "<td><a href=\""+ problem_URL + id + "/" + index + "\" target=\"_blank\">" + name + "</a></td>" +  
+        "<td><a href=\"" + status_URL + id + "/problem/" + index + "\" target=\"_blank\">" + solved + "</a></td>";
         ret += "<td>";
 
-        tags.m
         if (tags.length === 0) {
             ret += "<ul>";
             ret += "<li>-</li>";
@@ -186,7 +230,7 @@ function getRows(problems_json, problem_statistics_json, accepted, tags_params) 
     return ret;
 }
 
-function showProblems(api_params, tag_params) {
+function showProblems(api_params, tag_params, tag_mode) {
     $.when(
         $.getJSON("./json/problemset_problems.json"),
         $.getJSON("./json/problemset_problemStatistics.json")
@@ -196,20 +240,20 @@ function showProblems(api_params, tag_params) {
             $.when(
                 $.getJSON("http://codeforces.com/api/user.status", api_params)
             ).done(function(submission_json) {
-                let isStatusOk = submission_json['status'] === "OK";
-                let accepted = isStatusOk ? getAccepted(submission_json) : {};
+                let isStatusOk  = submission_json['status'] === "OK";
+                let accepted    = isStatusOk ? getAccepted(submission_json) : {};
 
-                rows = getRows(problems_json, problem_statistics_json, accepted, tag_params);
+                rows = getRows(problems_json, problem_statistics_json, accepted, tag_params, tag_mode);
                 $("#table-body").append(rows);
             });
         } else {
-            rows = getRows(problems_json, problem_statistics_json, {}, tag_params);
+            rows = getRows(problems_json, problem_statistics_json, {}, tag_params, tag_mode);
             $("#table-body").append(rows);
         }
     });
 }
 
-$("ul#tag-list").on("click", "li",function() {
+$("ul#tag-list").on("click", "li", function() {
     if ($(this).hasClass("checked")) {
         $(this).removeClass("checked");
 
@@ -222,3 +266,29 @@ $("ul#tag-list").on("click", "li",function() {
         $(this).find("label").addClass("checked");
     }
 });
+
+$("#radio-or-tag").change(function() {
+    if ($(this).is(":checked")) {
+        checkedOrTag();
+    } else {
+        checkedAndTag();
+    }
+});
+
+$("#radio-and-tag").change(function() {
+    if ($(this).is(":checked")) {
+        checkedAndTag();
+    } else {
+        checkedOrTag();
+    }
+});
+
+function checkedOrTag() {
+    $("#label-radio-or-tag").addClass("checked");
+    $("#label-radio-and-tag").removeClass("checked");
+}
+
+function checkedAndTag() {
+    $("#label-radio-or-tag").removeClass("checked");
+    $("#label-radio-and-tag").addClass("checked");
+}
