@@ -23,6 +23,7 @@ ul#tag-list li:hover {
 
 ul#tag-list li.checked {
     border: 2px solid #000000;
+    background-color: #E1E1E1
 }
 
 ul#tag-list li label {
@@ -38,4 +39,11 @@ ul#tag-list li label.checked {
 
 ul#tag-list li input.tag {
     display: none;
+}
+
+.condition-form {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
 }
