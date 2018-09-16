@@ -1,197 +1,221 @@
-$(document).ready(function()
-{
-	var params = getQueryStr();
-	var next_params = {'handle' : "", 'from' : "1",'count' : "5000"};
-	if(params["handle"]){
-		next_params['handle'] = params["handle"];
-	}
+$(document).ready(function() {
+    let params = getQueryString();
+    let api_params = {
+        'handle' : "",
+        'from' : "1",
+        'count' : "5000"
+    };
 
-	$("#handle").val(params["handle"]);
+    if (params['handle']) {
+        api_params['handle'] = params['handle'];
+    }
 
-	selected_tags = new Set();
-	if(params['tagName']){
-		tags = params['tagName'].split(',');
-		for(var i = 0;i < tags.length;i++){
-			selected_tags.add(tags[i]);
-		}
-	}
+    $("#handle").val(params['handle']);
 
-	showAllTag(selected_tags);
-	showProblems(next_params,selected_tags);
+    checked_tags = new Set();
+    if (params['tagName']) {
+        tags = params['tagName'].split(',');
+        tags.forEach(function(tag){
+            checked_tags.add(tag);
+        });
+    }
+
+    showAllTag(checked_tags);
+    showProblems(api_params, checked_tags);
 });
 
-function showAllTag(selected_tags) {
-	$.when(
-		$.getJSON('./json/problem_tags.json')
-	).done(function (problem_tags_json){
-		var tags = problem_tags_json['tags'];
-		var tag_list = $('#tag-list');
+function getQueryString() {
+    let query_str = decodeURI(window.location.search);
+    let retParam = {};
 
-		var len = tags.length;
-		for(var i = 0;i < len;i++){
-			tag_name = tags[i].replace(/ /g,'_');
-			var node = "<li><input type=\"checkbox\" id=\"tag-"
-			+ tag_name
-			+ "\" class=\"form-control tag\" name=\"tagName\" value=\"" + tag_name +"\">" 
-			+ "<label for=\"tag-"+tag_name + "\">"
-			+ tags[i]
-			+ "</label></li>"
-			tag_list.append(node);
-		}
+    if (query_str.length > 0) {
+        let get_params = query_str.substring(1).split("&");
 
-		checkTags(selected_tags);
-	});
+        get_params.forEach(function(get_param) {
+            let param = get_param.split("=");
+            let name = param[0];
+            let value = param[1];
+            retParam[name] = value;
+        });
+    }
+
+    return retParam;
+}
+
+function showAllTag(checked_tags) {
+    $.when(
+        $.getJSON("./json/problem_tags.json")
+    ).done(function(problem_tags_json) {
+        let tags = problem_tags_json['tags'];
+        let tag_list = $("#tag-list");
+
+        tags.forEach(function(tag) {
+            let tag_name = tag.replace(/ /g, "_");
+
+            let $li = $("<li></li>", {
+                class: "theme-color",
+            });
+            let $label = $("<label></label>");
+            $label.text(tag);
+            let $checkbox = $("<input>", {
+                type: "checkbox",
+                id: "tag-" + tag_name,
+                class: "form-control tag",
+                name: "tagName",
+                value: tag_name,
+            });
+
+            $li.append($label);
+            $li.append($checkbox);
+            tag_list.append($li);
+        });
+
+        checkTags(checked_tags);
+    });
 
 }
-function escapeSelectorStr(val){
-  return val.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
+
+function escapeSelector(str) {
+  return str.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
 }
+
 function checkTags(tags) {
-	tags.forEach(function (current,index,array) {
-		console.log($("#tag-"+escapeSelectorStr(current)));
-		$("#tag-"+escapeSelectorStr(current)).prop('checked', true);
-	});
+    tags.forEach(function(tag) {
+        let escapedTag = escapeSelector(tag);
+        $("#tag-" + escapedTag).closest("li").addClass("checked");
+        $("#tag-" + escapedTag).closest("li").find("label").addClass("checked");
+        $("#tag-"+escapedTag).prop("checked", true);
+    });
 }
 
-function getQueryStr(){
-	var query_str = window.location.search;
-	var ret = {};
+function makeTagName(delim) {
+    let tag_list = [];
 
-	if(query_str.length > 0){
-		query_str = query_str.substring(1);
-		var params = query_str.split("&");
-		var len = params.length;
-		for(var i = 0;i < len;i++){
-			var query = params[i].split("=");
-			var param_name = decodeURIComponent(query[0]);
-			var param_value = decodeURIComponent(query[1]);
-			ret[param_name] = param_value;
-		}
-	}
-	return ret;
+    $(".tag").each(function() {
+        if ($(this).is(":checked")) {
+            tag_list.push($(this).val());
+        }
+    });
+
+    return tag_list.join(delim);
 }
 
-function joinCheckedTags(delimiter){
-	var tag_param = "";
-	var tag_list = [];
+$("#btn-search").on("click", function(){
+    let handle = $("#handle").val();
+    let tag_params = makeTagName(',');
+    window.location.href = window.location.href.split("?")[0] 
+        + `?handle=${handle}&tagName=${tag_params}`;
+})
 
-	$('.tag').each(function (index){
-		if($(this).is(':checked')){
-			tag_list.push($(this).val());
-		}
-	});
+function getAccepted(submission_json) {
+    let accepted = {};
 
-	return tag_list.join(delimiter);
+    let submissions = submission_json['result'];
+    submissions.forEach(function(submission) {
+        let contest_id  = submission['contestId'];
+        let index       = submission['problem']['index'];
+        let key         = contest_id + index;
+
+        if (submission['verdict'] === "OK") {
+            accepted[key] = 'OK';
+        } else if(accepted[key] !== "OK") {
+            accepted[key] = 'NG';
+        }
+    });
+
+    return accepted;
 }
 
-$("#handle-btn").click(function(){
-	var handle = $("#handle").val();
-	var tag_params = joinCheckedTags(',');
-	window.location.href = window.location.href.split("?")[0] 
-		+ "?handle=" + handle 
-		+ "&tagName=" + tag_params;
+function getRows(problems_json, problem_statistics_json, accepted, tags_params) {
+    let problem_URL = "http://codeforces.com/problemset/problem/";
+    let status_URL = "http://codeforces.com/problemset/status/";
+
+    let ret = "";
+    for (let i = 0;i < problems_json[0].length;i++) {
+        let problem = problems_json[0][i];
+
+        let name = problem.name;
+        let id = problem.contestId;
+        let index = problem.index;
+        let solved = problem_statistics_json[0][i].solvedCount;
+        let tag = problem.tags;
+        let color = "";
+
+        if (tags_params.size > 0 && tag.length == 0) {
+            continue;
+        }
+
+        let flag = false;
+        for (let j = 0;j < tag.length;j++) {
+            replaced_tag = tag[j].replace(/ /g,'_');
+            flag |= tags_params.has(replaced_tag);
+        }
+
+        if (!flag && tag.length > 0) {
+            continue;
+        }
+
+        if (!accepted[id + index]) {
+            color = "";
+        } else if (accepted[id + index] == 'OK') {
+            color = "class=\"success\"";
+        } else if(accepted[id + index] == 'NG') {
+            color = "class=\"warning\"";
+        }
+
+        ret += "<tr "+color+">"+
+        "<td><a href=\""+problem_URL + id +"/"+ index +"\" target=\"_blank\">"+ id + index +"</a></td>" + 
+        "<td><a href=\""+problem_URL + id +"/"+ index + "\" target=\"_blank\">"+name +"</a></td>" +  
+        "<td>"+"<a href=\""+status_URL + id +"/problem/"+ index +"\" target=\"_blank\">" + solved +"</a></td>";
+        ret += "<td>";
+        for (let j = 0;j < tag.length;j++) {
+            if (j == 0) {
+                ret += tag[j];
+            } else {
+                ret += "<br>" + tag[j];
+            }
+        }
+        if (tag.length == 0) {
+            ret += "-";
+        }
+        ret += "</td></tr>";
+    }
+    return ret;
+}
+
+function showProblems(api_params, tag_params) {
+    $.when(
+        $.getJSON("./json/problemset_problems.json"),
+        $.getJSON("./json/problemset_problemStatistics.json")
+    ).done(function(problems_json, problem_statistics_json) {
+        let rows = "";
+        if (api_params['handle']) {
+            $.when(
+                $.getJSON("http://codeforces.com/api/user.status", api_params)
+            ).done(function(submission_json) {
+                let isStatusOk = submission_json['status'] === "OK";
+                let accepted = isStatusOk ? getAccepted(submission_json) : {};
+
+                rows = getRows(problems_json, problem_statistics_json, accepted, tag_params);
+                $("#table-body").append(rows);
+            });
+        } else {
+            rows = getRows(problems_json, problem_statistics_json, {}, tag_params);
+            $("#table-body").append(rows);
+        }
+    });
+}
+
+$("ul#tag-list").on("click", "li",function() {
+    if ($(this).hasClass("checked")) {
+        $(this).removeClass("checked");
+
+        $(this).find("input[name=tagName]:checked").prop("checked", false);
+        $(this).find("label").removeClass("checked");
+    } else {
+        $(this).addClass("checked");
+
+        $(this).find("input[name=tagName]:not(:checked)").prop("checked", true);
+        $(this).find("label").addClass("checked");
+    }
 });
-
-$("#tag-check-btn").click(function(){
-	$('input:checkbox').prop('checked',true);
-});
-
-$("#tag-nocheck-btn").click(function(){
-	$('input:checkbox').prop('checked',false);
-});
-
-function getAccepted(submission_json){
-	var accepted = {};
-	var len = submission_json['result'].length;
-	for(var i = 0;i < len;i++){
-		var submission = submission_json['result'][i];
-		var contest_id = submission['contestId'];
-		var index = submission['problem']['index'];
-		var key = contest_id + index;
-		
-		if(submission['verdict'] == 'OK'){
-			accepted[key] = 'OK';
-		}else if(accepted[key] != 'OK'){
-			accepted[key] = 'NG';
-		}
-	}
-
-	return accepted;
-}
-
-function getRows(problems_json,problem_statistics_json,accepted,tags_params){
-	var problem_URL = "http://codeforces.com/problemset/problem/";
-	var status_URL = "http://codeforces.com/problemset/status/";
-
-	var rows = [];
-	var len = problems_json[0].length;
-	var ret = "";
-	for(var i = 0;i < len;i++){
-		var problem = problems_json[0][i];
-
-		var name = problem.name;
-		var id = problem.contestId;
-		var index = problem.index;
-		var solved = problem_statistics_json[0][i].solvedCount;
-		var tag = problem.tags;
-		var color = "";
-
-		if(tags_params.size > 0 && tag.length == 0)continue;
-
-		var flag = false;
-		for(var j = 0;j < tag.length;j++){
-			replaced_tag = tag[j].replace(/ /g,'_');
-			flag |= tags_params.has(replaced_tag);
-		}
-
-		if(!flag && tag.length > 0)continue;
-
-		if(!accepted[id + index]){
-			color = "";
-		}else if(accepted[id + index] == 'OK'){
-			color = "class=\"success\"";
-		}else if(accepted[id + index] == 'NG'){
-			color = "class=\"warning\"";
-		}
-
-		ret += "<tr "+color+">"+
-		"<td><a href=\""+problem_URL + id +"/"+ index +"\" target=\"_blank\">"+ id + index +"</a></td>" + 
-		"<td><a href=\""+problem_URL + id +"/"+ index + "\" target=\"_blank\">"+name +"</a></td>" +  
-		"<td>"+"<a href=\""+status_URL + id +"/problem/"+ index +"\" target=\"_blank\">" + solved +"</a></td>";
-		ret += "<td>";
-		for(var j = 0;j < tag.length;j++){
-			if(j == 0)ret += tag[j];
-			else ret += "<br>" + tag[j];
-		}
-		if(tag.length == 0){
-			ret += "-";
-		}
-		ret += "</td></tr>";
-	}
-	return ret;
-}
-
-function showProblems(params,tag_params){
-	$.when(
-		$.getJSON('./json/problemset_problems.json'),
-		$.getJSON('./json/problemset_problemStatistics.json')
-	).done(function (problems_json,problem_statistics_json){
-		var rows = "";
-		if(params['handle']){
-			$.when(
-				$.getJSON('http://codeforces.com/api/user.status',params)
-			).done(function (submission_json){
-				var accepted = {};
-				if(submission_json['status'] == 'OK'){
-					accepted = getAccepted(submission_json);
-				}
-
-				rows = getRows(problems_json,problem_statistics_json,accepted,tag_params);
-				$('#table-body').append(rows);
-			});
-		}else{
-			rows = getRows(problems_json,problem_statistics_json,{},tag_params);
-			$('#table-body').append(rows);
-		}
-	});
-}
