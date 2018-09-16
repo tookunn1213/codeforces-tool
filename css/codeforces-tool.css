@@ -7,7 +7,7 @@ nav.navbar.navbar-default .navbar-header a.navbar-brand {
     color: #000000;
 }
 
-ul#tag-list li {
+#tag-list li {
     border-radius: 10px;
     border: 2px solid #e0e0e0;
     padding: 2px 4px;
@@ -17,11 +17,11 @@ ul#tag-list li {
     background-color: #FFFFFF;
 }
 
-ul#tag-list li:hover {
+#tag-list li:hover {
     border: 2px solid #888888;
 }
 
-ul#tag-list li.checked {
+#tag-list li.checked {
     border: 2px solid #000000;
     background-color: #E1E1E1
 }
@@ -57,4 +57,31 @@ ul#tag-list li input.tag {
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
+}
+
+#radio-or-tag {
+    display: none;
+}
+
+#radio-and-tag {
+    display: none;
+}
+
+.label-radio-tag {
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    margin: 10px;
+    cursor: pointer;
+    user-select: none;
+    color: #999999;
+    background-color: #FFFFFF;
+    padding: 10px 15px;
+}
+.label-radio-tag:hover {
+    border: 2px solid #888888;
+}
+.label-radio-tag.checked {
+    color: #000000;
+    border: 2px solid #000000;
+    background-color: #E1E1E1
 }
