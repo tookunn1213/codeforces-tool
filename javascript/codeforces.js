@@ -138,20 +138,20 @@ function getRows(problems_json, problem_statistics_json, accepted, tags_params) 
         let id = problem.contestId;
         let index = problem.index;
         let solved = problem_statistics_json[0][i].solvedCount;
-        let tag = problem.tags;
+        let tags = problem.tags;
         let color = "";
 
-        if (tags_params.size > 0 && tag.length == 0) {
+        if (tags_params.size > 0 && tags.length == 0) {
             continue;
         }
 
         let flag = false;
-        for (let j = 0;j < tag.length;j++) {
-            replaced_tag = tag[j].replace(/ /g,'_');
+        for (let j = 0;j < tags.length;j++) {
+            replaced_tag = tags[j].replace(/ /g,'_');
             flag |= tags_params.has(replaced_tag);
         }
 
-        if (!flag && tag.length > 0) {
+        if (!flag && tags.length > 0) {
             continue;
         }
 
@@ -168,15 +168,18 @@ function getRows(problems_json, problem_statistics_json, accepted, tags_params) 
         "<td><a href=\""+problem_URL + id +"/"+ index + "\" target=\"_blank\">"+name +"</a></td>" +  
         "<td>"+"<a href=\""+status_URL + id +"/problem/"+ index +"\" target=\"_blank\">" + solved +"</a></td>";
         ret += "<td>";
-        for (let j = 0;j < tag.length;j++) {
-            if (j == 0) {
-                ret += tag[j];
-            } else {
-                ret += "<br>" + tag[j];
-            }
-        }
-        if (tag.length == 0) {
-            ret += "-";
+
+        tags.m
+        if (tags.length === 0) {
+            ret += "<ul>";
+            ret += "<li>-</li>";
+            ret += "<ul>";
+        } else {
+            ret += '<ul class="list-inline">';
+            ret += tags.map(function(tag) {
+                return '<li class="problem-tag">' + tag + "</li>";
+            }).join("");
+            ret += "</ul>";
         }
         ret += "</td></tr>";
     }
