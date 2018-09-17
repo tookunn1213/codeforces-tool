@@ -215,7 +215,7 @@ function getRows(problems_json, problem_statistics_json, accepted, tags_params, 
         ret += "<td>";
 
         if (tags.length === 0) {
-            ret += "<ul>";
+            ret += '<ul class="list-inline">';
             ret += "<li>-</li>";
             ret += "<ul>";
         } else {
