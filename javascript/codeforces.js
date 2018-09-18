@@ -28,9 +28,35 @@ $(document).ready(function() {
         });
     }
 
+    showStatus();
     showAllTag(checked_tags);
     showProblems(api_params, checked_tags, tag_mode);
 });
+
+function showStatus() {
+    let status_id_list      = ["ac", "wa", "none"];
+    let status_name_list    = ["AC", "WA", "None"];
+
+    let $ul = $("#status-list");
+    status_id_list.forEach(function(status_id, index){
+        let $li         = $("<li></li>", {
+            id: "status-" + status_id
+        });
+        let $label      = $("<label></label>");
+        let $checkbox   = $("<input>", {
+            type:   "checkbox",
+            // id:     "status-" + status_id,
+            class:  "form-control status",
+            name:   "status",
+            value:  status_id,
+        });
+        $label.text(status_name_list[index]);
+
+        $li.append($label);
+        $li.append($checkbox);
+        $ul.append($li);
+    });
+}
 
 function getQueryString() {
     let query_str = decodeURI(window.location.search);
@@ -263,6 +289,20 @@ $("ul#tag-list").on("click", "li", function() {
         $(this).addClass("checked");
 
         $(this).find("input[name=tagName]:not(:checked)").prop("checked", true);
+        $(this).find("label").addClass("checked");
+    }
+});
+
+$("ul#status-list").on("click", "li", function() {
+    if ($(this).hasClass("checked")) {
+        $(this).removeClass("checked");
+
+        $(this).find("input[name=status]:checked").prop("checked", false);
+        $(this).find("label").removeClass("checked");
+    } else {
+        $(this).addClass("checked");
+
+        $(this).find("input[name=status]:not(:checked)").prop("checked", true);
         $(this).find("label").addClass("checked");
     }
 });
