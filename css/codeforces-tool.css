@@ -7,41 +7,49 @@ nav.navbar.navbar-default .navbar-header a.navbar-brand {
     color: #000000;
 }
 
-#tag-list li {
+/* tag */
+.tag-group .tag-item {
     border-radius: 10px;
     border: 2px solid #e0e0e0;
-    padding: 2px 4px;
-    margin: 2px;
     cursor: pointer;
     color: #999999;
     background-color: #FFFFFF;
 }
 
-#tag-list li:hover {
+.tag-group .tag-item:hover {
     border: 2px solid #888888;
 }
 
-#tag-list li.checked {
+.tag-group .tag-item.active {
     border: 2px solid #000000;
     background-color: #E1E1E1
 }
 
-#tag-list li label {
+.tag-group .tag-item .tag-item-label {
     color: #999999;
     padding: 0px 5px;
     cursor: pointer;
     user-select: none;
 }
 
-#tag-list li label.checked {
+.tag-group .tag-item.active .tag-item-label {
     color: #000000;
 }
 
-#tag-list li input.tag {
+.tag-group .tag-item .tag {
     display: none;
 }
 
-#status-list li {
+.tag-item--small {
+    padding: 2px 4px;
+    margin: 2px;
+}
+
+.tag-item--big {
+    
+}
+
+/* #status-list li {
     border-radius: 10px;
     border: 2px solid #e0e0e0;
     padding: 2px 4px;
@@ -62,7 +70,7 @@ nav.navbar.navbar-default .navbar-header a.navbar-brand {
 
 #status-list li input.status {
     display: none;
-}
+} */
 
 #status-list li label {
     color: #999999;

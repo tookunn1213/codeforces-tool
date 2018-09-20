@@ -87,9 +87,11 @@ function showAllTag(checked_tags) {
         tags.forEach(function(tag) {
             let tag_name    = tag.replace(/ /g, "_");
             let $li         = $("<li></li>", {
-                class: "theme-color",
+                class: "tag-item theme-color",
             });
-            let $label      = $("<label></label>");
+            let $label      = $("<label></label>", {
+                class: "tag-item-label",
+            });
             let $checkbox   = $("<input>", {
                 type:   "checkbox",
                 id:     "tag-" + tag_name,
@@ -116,9 +118,8 @@ function escapeSelector(str) {
 function checkTags(tags) {
     tags.forEach(function(tag) {
         let escapedTag = escapeSelector(tag);
-        $("#tag-" + escapedTag).closest("li").addClass("checked");
-        $("#tag-" + escapedTag).closest("li").find("label").addClass("checked");
-        $("#tag-"+escapedTag).prop("checked", true);
+        $("#tag-" + escapedTag).closest(".tag-item").addClass("active");
+        $("#tag-" + escapedTag).prop("checked", true);
     });
 }
 
@@ -279,21 +280,19 @@ function showProblems(api_params, tag_params, tag_mode) {
     });
 }
 
-$("ul#tag-list").on("click", "li", function() {
-    if ($(this).hasClass("checked")) {
-        $(this).removeClass("checked");
+$("#tag-list").on("click", ".tag-item", function() {
+    if ($(this).hasClass("active")) {
+        $(this).removeClass("active");
 
         $(this).find("input[name=tagName]:checked").prop("checked", false);
-        $(this).find("label").removeClass("checked");
     } else {
-        $(this).addClass("checked");
+        $(this).addClass("active");
 
         $(this).find("input[name=tagName]:not(:checked)").prop("checked", true);
-        $(this).find("label").addClass("checked");
     }
 });
 
-$("ul#status-list").on("click", "li", function() {
+$("#status-list").on("click", "li", function() {
     if ($(this).hasClass("checked")) {
         $(this).removeClass("checked");
 
