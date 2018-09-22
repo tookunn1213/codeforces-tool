@@ -9,9 +9,9 @@ $(document).ready(function() {
     // select tag mode
     let tag_mode = params['tag_mode'];
     if (tag_mode === "and") {
-        checkedAndTag();
+        selectAndRadioButton();
     } else {
-        checkedOrTag();
+        selectOrRadioButton();
     }
 
     if (params['handle']) {
@@ -34,19 +34,23 @@ $(document).ready(function() {
 });
 
 function showStatus() {
-    let status_id_list      = ["ac", "wa", "none"];
-    let status_name_list    = ["AC", "WA", "None"];
+    let status_id_list      = ["ac", "wa", "nosubmit"];
+    let status_name_list    = ["AC", "WA", "NoSubmit"];
+    let status_class        = ["accepted", "wronganswer", "nosubmit"]
 
     let $ul = $("#status-list");
     status_id_list.forEach(function(status_id, index){
         let $li         = $("<li></li>", {
-            id: "status-" + status_id
+            id: "status-" + status_id,
+            class: "checkbox-item checkbox-item--big " + status_class[index],
         });
-        let $label      = $("<label></label>");
+        let $label      = $("<label></label>", {
+            class: "checkbox-item-label",
+        });
         let $checkbox   = $("<input>", {
             type:   "checkbox",
-            // id:     "status-" + status_id,
-            class:  "form-control status",
+            id:     "status-" + status_id,
+            class:  "form-control status checkbox",
             name:   "status",
             value:  status_id,
         });
@@ -87,15 +91,15 @@ function showAllTag(checked_tags) {
         tags.forEach(function(tag) {
             let tag_name    = tag.replace(/ /g, "_");
             let $li         = $("<li></li>", {
-                class: "tag-item theme-color",
+                class: "checkbox-item checkbox-item--small",
             });
             let $label      = $("<label></label>", {
-                class: "tag-item-label",
+                class: "checkbox-item-label",
             });
             let $checkbox   = $("<input>", {
                 type:   "checkbox",
                 id:     "tag-" + tag_name,
-                class:  "form-control tag",
+                class:  "form-control checkbox",
                 name:   "tagName",
                 value:  tag_name,
             });
@@ -118,7 +122,7 @@ function escapeSelector(str) {
 function checkTags(tags) {
     tags.forEach(function(tag) {
         let escapedTag = escapeSelector(tag);
-        $("#tag-" + escapedTag).closest(".tag-item").addClass("active");
+        $("#tag-" + escapedTag).closest(".checkbox-item").addClass("active");
         $("#tag-" + escapedTag).prop("checked", true);
     });
 }
@@ -280,7 +284,7 @@ function showProblems(api_params, tag_params, tag_mode) {
     });
 }
 
-$("#tag-list").on("click", ".tag-item", function() {
+$("#tag-list").on("click", ".checkbox-item", function() {
     if ($(this).hasClass("active")) {
         $(this).removeClass("active");
 
@@ -292,42 +296,40 @@ $("#tag-list").on("click", ".tag-item", function() {
     }
 });
 
-$("#status-list").on("click", "li", function() {
-    if ($(this).hasClass("checked")) {
-        $(this).removeClass("checked");
+$("#status-list").on("click", ".checkbox-item", function() {
+    if ($(this).hasClass("active")) {
+        $(this).removeClass("active");
 
         $(this).find("input[name=status]:checked").prop("checked", false);
-        $(this).find("label").removeClass("checked");
     } else {
-        $(this).addClass("checked");
+        $(this).addClass("active");
 
         $(this).find("input[name=status]:not(:checked)").prop("checked", true);
-        $(this).find("label").addClass("checked");
     }
 });
 
-$("#radio-or-tag").change(function() {
-    if ($(this).is(":checked")) {
-        checkedOrTag();
-    } else {
-        checkedAndTag();
+$("#or-radio-btn-item").on("click", function() {
+    if (!$(this).hasClass("active")) {
+        selectOrRadioButton();
     }
 });
 
-$("#radio-and-tag").change(function() {
-    if ($(this).is(":checked")) {
-        checkedAndTag();
-    } else {
-        checkedOrTag();
+$("#and-radio-btn-item").on("click", function() {
+    if (!$(this).hasClass("active")) {
+        selectAndRadioButton();
     }
 });
 
-function checkedOrTag() {
-    $("#label-radio-or-tag").addClass("checked");
-    $("#label-radio-and-tag").removeClass("checked");
+function selectOrRadioButton() {
+    $("#or-radio-btn-item").addClass("active");
+    $("#or-radio-btn").prop("checked", true);
+    $("#and-radio-btn-item").removeClass("active");
+    $("#and-radio-btn").prop("checked", false);
 }
 
-function checkedAndTag() {
-    $("#label-radio-or-tag").removeClass("checked");
-    $("#label-radio-and-tag").addClass("checked");
+function selectAndRadioButton() {
+    $("#or-radio-btn-item").removeClass("active");
+    $("#or-radio-btn").prop("checked", false);
+    $("#and-radio-btn-item").addClass("active");
+    $("#and-radio-btn").prop("checked", true);
 }

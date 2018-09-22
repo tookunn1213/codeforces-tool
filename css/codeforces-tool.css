@@ -7,93 +7,89 @@ nav.navbar.navbar-default .navbar-header a.navbar-brand {
     color: #000000;
 }
 
-/* tag */
-.tag-group .tag-item {
+/* checkbox item */
+.checkbox-item-group .checkbox-item {
     border-radius: 10px;
-    border: 2px solid #e0e0e0;
-    cursor: pointer;
     color: #999999;
     background-color: #FFFFFF;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
 }
 
-.tag-group .tag-item:hover {
+.checkbox-item-group .checkbox-item:hover {
     border: 2px solid #888888;
 }
 
-.tag-group .tag-item.active {
+.checkbox-item-group .checkbox-item.active {
     border: 2px solid #000000;
     background-color: #E1E1E1
 }
 
-.tag-group .tag-item .tag-item-label {
-    color: #999999;
+.checkbox-item-group .checkbox-item .checkbox-item-label {
     padding: 0px 5px;
     cursor: pointer;
     user-select: none;
 }
 
-.tag-group .tag-item.active .tag-item-label {
+.checkbox-item-group .checkbox-item.active .checkbox-item-label {
     color: #000000;
 }
 
-.tag-group .tag-item .tag {
+.checkbox-item-group .checkbox-item .checkbox {
     display: none;
 }
 
-.tag-item--small {
+.checkbox-item--small {
     padding: 2px 4px;
     margin: 2px;
 }
 
-.tag-item--big {
-    
+.checkbox-item--big {
+    padding: 5px 10px;
+    margin: 2px;
 }
 
-/* #status-list li {
+.checkbox-item-group .checkbox-item.accepted.active {
+    background-color: #5cb85c;
+}
+
+.checkbox-item-group .checkbox-item.wronganswer.active {
+    background-color: #f0ad4e;
+}
+
+/* radio button item */
+
+.radio-btn-item-group .radio-btn-item {
     border-radius: 10px;
-    border: 2px solid #e0e0e0;
-    padding: 2px 4px;
-    margin: 2px 10px;
-    cursor: pointer;
     color: #999999;
     background-color: #FFFFFF;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 2px;
 }
 
-#status-list li:hover {
+.radio-btn-item-group .radio-btn-item:hover {
     border: 2px solid #888888;
 }
 
-#status-list li.checked {
+.radio-btn-item-group .radio-btn-item.active {
     border: 2px solid #000000;
     background-color: #E1E1E1
 }
 
-#status-list li input.status {
-    display: none;
-} */
-
-#status-list li label {
-    color: #999999;
-    padding: 5px 10px;
+.radio-btn-item-group .radio-btn-item .radio-btn-item-label {
+    padding: 0px 5px;
     cursor: pointer;
     user-select: none;
 }
 
-#status-list li label.checked {
+.radio-btn-item-group .radio-btn-item.active .radio-btn-item-label {
     color: #000000;
 }
 
-#status-list #status-ac {
-    color: #fff;
-    background-color: #5cb85c;
-}
-
-#status-list #status-wa {
-    background-color: #f0ad4e;
-}
-
-#status-list #status-none {
-    background-color: #fff;
+.radio-btn-item-group .radio-btn-item .radio-btn {
+    display: none;
 }
 
 .problem-tag {
@@ -112,31 +108,4 @@ nav.navbar.navbar-default .navbar-header a.navbar-brand {
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
-}
-
-#radio-or-tag {
-    display: none;
-}
-
-#radio-and-tag {
-    display: none;
-}
-
-.label-radio-tag {
-    border-radius: 10px;
-    border: 2px solid #e0e0e0;
-    margin: 10px;
-    cursor: pointer;
-    user-select: none;
-    color: #999999;
-    background-color: #FFFFFF;
-    padding: 10px 15px;
-}
-.label-radio-tag:hover {
-    border: 2px solid #888888;
-}
-.label-radio-tag.checked {
-    color: #000000;
-    border: 2px solid #000000;
-    background-color: #E1E1E1
 }
