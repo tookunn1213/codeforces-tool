@@ -1,60 +1,64 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/codeforces-tool.css">
         <title>Codeforces Tool</title>
     </head>
     <body>
-        <nav class="navbar navbar-default">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="./">Codeforces Tool</a>
+        <header>
+            <nav class="navbar navbar-default">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="./">Codeforces Tool</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                    </ul>
                 </div>
-                <ul class="nav navbar-nav">
-                </ul>
-            </div>
-        </nav>
+            </nav>
+        </header>
 
-        <div class="container">
-            <div class="page-header">
+        <article class="container">
+            <section class="page-header">
                 <h1>Problemset</h1>
-            </div>
-            <form class="condition-form">
-                <div class="form-group">
-                    <label>Handle:</label>
-                    <input type="text" id="handle" name="handle" class="form-control" placeholder="Handle">
-                </div>
-                <div class="form-group">
-                    <label>Select status: </label>
-                    <ul id="status-list" class="checkbox-item-group list-inline"></ul>
-                </div>
-                <div class="form-group">
-                    <div class="select-tag-mode-block">
-                        <label>Select tag mode: </label>
-                        <ul id="tag-mode-list" class="radio-btn-item-group list-inline">
-                            <li id="or-radio-btn-item" class="radio-btn-item">
-                                <label class="radio-btn-item-label">OR</label>
-                                <input type="radio" id="or-radio-btn" value="or" class="form-control radio-btn" name="tag_mode">
-                            </li>
-                            <li id="and-radio-btn-item" class="radio-btn-item">
-                                <label class="radio-btn-item-label">AND</label>
-                                <input type="radio" id="and-radio-btn" value="and" class="form-control radio-btn" name="tag_mode">
-                            </li>
-                        </ul>
+            </section>
+            <section>
+                <form class="condition-form">
+                    <div class="form-group">
+                        <label>Handle:</label>
+                        <input type="text" id="handle" name="handle" class="form-control" placeholder="Handle">
                     </div>
-                    <div class="select-tag-block">
-                        <label>Tag:</label>
-                        <ul id="tag-list" class="checkbox-item-group list-inline"></ul>
+                    <div class="form-group">
+                        <label>Select status: </label>
+                        <ul id="status-list" class="checkbox-item-group list-inline"></ul>
                     </div>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-default" type="button" id="btn-search">Search</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <div class="select-tag-mode-block">
+                            <label>Select tag mode: </label>
+                            <ul id="tag-mode-list" class="radio-btn-item-group list-inline">
+                                <li id="or-radio-btn-item" class="radio-btn-item">
+                                    <label class="radio-btn-item-label">OR</label>
+                                    <input type="radio" id="or-radio-btn" value="or" class="form-control radio-btn" name="tag_mode">
+                                </li>
+                                <li id="and-radio-btn-item" class="radio-btn-item">
+                                    <label class="radio-btn-item-label">AND</label>
+                                    <input type="radio" id="and-radio-btn" value="and" class="form-control radio-btn" name="tag_mode">
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="select-tag-block">
+                            <label>Tag:</label>
+                            <ul id="tag-list" class="checkbox-item-group list-inline"></ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-default" type="button" id="btn-search">Search</button>
+                    </div>
+                </form>
+            </section>
 
-            <div class="table-responsive">
+            <section class="table-responsive">
                 <table class="table table-striped table-bordered table-hover">
                     <thead>
                         <th>ProblemID</th>
@@ -65,8 +69,8 @@
                     <tbody id="table-body">
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </section>
+        </article>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="./javascript/codeforces.js"></script>
