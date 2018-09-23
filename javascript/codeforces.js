@@ -240,7 +240,7 @@ function getRows(problems_json, problem_statistics_json, accepted, tags_params, 
         }
 
         ret += "<tr "+color+">"+
-        "<td><a href=\""+ problem_URL + id + "/" + index + "\" target=\"_blank\">" + id + index + "</a></td>" + 
+        "<td><a href=\""+ problem_URL + id + "/" + index + "\" target=\"_blank\">" + id + "-" + index + "</a></td>" + 
         "<td><a href=\""+ problem_URL + id + "/" + index + "\" target=\"_blank\">" + name + "</a></td>" +  
         "<td><a href=\"" + status_URL + id + "/problem/" + index + "\" target=\"_blank\">" + solved + "</a></td>";
         ret += "<td>";
