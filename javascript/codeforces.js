@@ -39,7 +39,7 @@ function showStatus() {
     let status_class        = ["accepted", "wronganswer", "nosubmit"]
 
     let $ul = $("#status-list");
-    status_id_list.forEach(function(status_id, index){
+    status_id_list.forEach(function(status_id, index) {
         let $li         = $("<li></li>", {
             id: "status-" + status_id,
             class: "checkbox-item checkbox-item--big " + status_class[index],
@@ -147,7 +147,7 @@ function getTagMode() {
     }
 }
 
-$("#btn-search").on("click", function(){
+$("#btn-search").on("click", function() {
     let handle      = $("#handle").val();
     let tag_mode    = getTagMode();
     let tag_params  = makeTagName(',');
@@ -184,7 +184,7 @@ function matchTags(tags_params, tags, tag_mode) {
             return false;
         }
 
-        tags.forEach(function(tag){
+        tags.forEach(function(tag) {
             replaced = tag.replace(/ /g, "_");
             has = tags_params.has(replaced);
             ok = ok && has;
@@ -194,7 +194,7 @@ function matchTags(tags_params, tags, tag_mode) {
     } else {
         let ok = false;
 
-        tags.forEach(function(tag){
+        tags.forEach(function(tag) {
             replaced = tag.replace(/ /g, "_");
             has = tags_params.has(replaced);
     
