@@ -1,0 +1,108 @@
+$color_white : #FFFFFF;
+
+// checkbox item
+.checkbox-item-group {
+
+    .checkbox-item {
+        border-radius: 10px;
+        color: #999999;
+        background-color: $color_white;
+        border: 2px solid #e0e0e0;
+        cursor: pointer;
+
+        &:hover {
+            border: 2px solid #888888;
+        }
+
+        &.active {
+            border: 2px solid #000000;
+            background-color: #E1E1E1;
+
+            .checkbox-item-label {
+                color: #000000;
+            }
+
+            &.accepted {
+                background-color: #5cb85c;
+            }
+
+            &.wronganswer {
+                background-color: #f0ad4e;
+            }
+        }
+
+        .checkbox-item-label {
+            padding: 0px 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox {
+            display: none;
+        }
+    }
+}
+
+.checkbox-item--small {
+    padding: 2px 4px;
+    margin: 2px;
+}
+
+.checkbox-item--big {
+    padding: 5px 10px;
+    margin: 2px;
+}
+
+// radio button item
+.radio-btn-item-group {
+    .radio-btn-item {
+        border-radius: 10px;
+        color: #999999;
+        background-color: #FFFFFF;
+        border: 2px solid #e0e0e0;
+        cursor: pointer;
+        padding: 5px 10px;
+        margin: 2px;
+
+        &:hover {
+            border: 2px solid #888888;
+        }
+
+        &.active {
+            border: 2px solid #000000;
+            background-color: #E1E1E1;
+
+            .radio-btn-item-label {
+                color: #000000;
+            }
+        }
+
+        .radio-btn-item-label {
+            padding: 0px 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .radio-btn {
+            display: none;
+        }
+    }
+}
+
+.problem-tag {
+    border: 2px solid #000000;
+    background-color: #E1E1E1;
+    color: #000000;
+    padding: 0px 5px;
+    margin: 7px 2px;
+    font-weight: 700;
+    border-radius: 10px;
+    user-select: none;
+}
+
+.condition-form {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+}
