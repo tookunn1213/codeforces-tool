@@ -1,0 +1,24 @@
+{
+  "name": "codeforces-tool",
+  "version": "1.0.0",
+  "description": "gh-pages site : http://tookunn1213.github.io/codeforces-tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tookunn1213/codeforces-tool.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tookunn1213/codeforces-tool/issues"
+  },
+  "homepage": "https://github.com/tookunn1213/codeforces-tool#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-sass": "^4.0.1"
+  }
+}
