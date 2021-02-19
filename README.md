@@ -1,1 +1,1 @@
-gh-pages site : http://tookunn1213.github.io/codeforces-tool
+gh-pages site : https://tookunn1213.github.io/codeforces-tool/
