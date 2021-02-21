@@ -160,6 +160,9 @@ function getAccepted(json) {
         if (submission.verdict === 'OK') {
             accepted.set(id, 'OK');
         }
+        else if (accepted.get(id) !== 'OK') {
+            accepted.set(id, 'NG');
+        }
     });
     return accepted;
 }
@@ -184,7 +187,7 @@ function matchTags(tagParams, tags, tagMode) {
         return ok;
     }
 }
-function getRows(problems, statistics, accepted, tagParams, tagMode) {
+function getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode) {
     const problemURL = "http://codeforces.com/problemset/problem/";
     const statusURL = "http://codeforces.com/problemset/status/";
     const trList = [];
@@ -210,6 +213,15 @@ function getRows(problems, statistics, accepted, tagParams, tagMode) {
         }
         else if (accepted.get(id + index) === 'NG') {
             color = 'warning';
+        }
+        if (accepted.get(id + index) === 'OK' && !checkedStatus.has('ac')) {
+            return;
+        }
+        if (accepted.get(id + index) === 'NG' && !checkedStatus.has('wa')) {
+            return;
+        }
+        if (!accepted.has(id + index) && !checkedStatus.has('nosubmit')) {
+            return;
         }
         const tr = document.createElement('tr');
         tr.setAttribute('class', color);
@@ -254,7 +266,7 @@ function getRows(problems, statistics, accepted, tagParams, tagMode) {
     });
     return trList;
 }
-function showProblems(apiParams, tagParams, tagMode) {
+function showProblems(apiParams, checkedStatus, tagParams, tagMode) {
     let problems = [];
     let statistics = [];
     Promise.resolve().then(() => {
@@ -275,7 +287,7 @@ function showProblems(apiParams, tagParams, tagMode) {
                 accepted = ok ? getAccepted(fetchedAccepted) : new Map();
                 return Promise.resolve();
             }).then(() => {
-                const trList = getRows(problems, statistics, accepted, tagParams, tagMode);
+                const trList = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode);
                 const tableBody = document.getElementById('table-body');
                 if (tableBody !== null) {
                     tableBody.append(...trList);
@@ -283,7 +295,7 @@ function showProblems(apiParams, tagParams, tagMode) {
             });
         }
         else {
-            const trList = getRows(problems, statistics, accepted, tagParams, tagMode);
+            const trList = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode);
             const tableBody = document.getElementById('table-body');
             if (tableBody !== null) {
                 tableBody.append(...trList);
@@ -341,7 +353,7 @@ function init() {
     }).then(() => {
         setOnClickToTagList();
     });
-    showProblems(apiParams, checkedTags, tagMode);
+    showProblems(apiParams, checkedStatus, checkedTags, tagMode);
 }
 function setOnClickToTagList() {
     var _a;

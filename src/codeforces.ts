@@ -262,6 +262,8 @@ function getAccepted(json: any): Map<string, string> {
 
         if (submission.verdict === 'OK') {
             accepted.set(id, 'OK');
+        } else if (accepted.get(id) !== 'OK') {
+            accepted.set(id, 'NG');
         }
     });
 
@@ -294,7 +296,7 @@ function matchTags(tagParams: Set<string>, tags: string[], tagMode: string) {
     }
 }
 
-function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted: Map<string, string>, tagParams: Set<string>, tagMode: string): HTMLTableRowElement[] {
+function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted: Map<string, string>, checkedStatus: Set<string>, tagParams: Set<string>, tagMode: string): HTMLTableRowElement[] {
     const problemURL = "http://codeforces.com/problemset/problem/";
     const statusURL = "http://codeforces.com/problemset/status/";
 
@@ -324,6 +326,18 @@ function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted:
             color = 'success';
         } else if (accepted.get(id + index) === 'NG') {
             color = 'warning';
+        }
+
+        if (accepted.get(id + index) === 'OK' && !checkedStatus.has('ac')) {
+            return;
+        }
+
+        if (accepted.get(id + index) === 'NG' && !checkedStatus.has('wa')) {
+            return;
+        }
+
+        if (!accepted.has(id + index) && !checkedStatus.has('nosubmit')) {
+            return;
         }
 
         const tr = document.createElement('tr');
@@ -378,7 +392,7 @@ function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted:
     return trList;
 }
 
-function showProblems(apiParams: APIParam, tagParams: Set<string>, tagMode: string) {
+function showProblems(apiParams: APIParam, checkedStatus: Set<string>, tagParams: Set<string>, tagMode: string) {
 
     let problems: Problem[] = [];
     let statistics: ProblemStatistics[] = [];
@@ -403,7 +417,7 @@ function showProblems(apiParams: APIParam, tagParams: Set<string>, tagMode: stri
 
                 return Promise.resolve();
             }).then(() => {
-                const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, tagParams, tagMode)
+                const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode)
 
                 const tableBody: HTMLElement | null = document.getElementById('table-body');
 
@@ -412,7 +426,7 @@ function showProblems(apiParams: APIParam, tagParams: Set<string>, tagMode: stri
                 }
             });
         } else {
-            const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, tagParams, tagMode)
+            const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode)
 
             const tableBody: HTMLElement | null = document.getElementById('table-body');
 
@@ -488,7 +502,7 @@ function init() {
     }).then(() => {
         setOnClickToTagList();
     });
-    showProblems(apiParams, checkedTags, tagMode);
+    showProblems(apiParams, checkedStatus, checkedTags, tagMode);
 }
 
 function setOnClickToTagList() {
