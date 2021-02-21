@@ -3,57 +3,45 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-        <link rel="stylesheet" href="css/codeforces-tool.css">
+        <!-- <link rel="stylesheet" href="css/codeforces-tool.css"> -->
         <title>Codeforces Tool</title>
     </head>
     <body>
         <header>
             <nav class="navbar navbar-default">
-                <div class="container">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="./">Codeforces Tool</a>
-                    </div>
-                    <ul class="nav navbar-nav">
-                    </ul>
-                </div>
+                <a class="navbar-brand" href="./">Codeforces Tool</a>
             </nav>
         </header>
 
         <article class="container">
-            <section class="page-header">
-                <h1>Problemset</h1>
-            </section>
+            <h1>Problemset</h1>
             <section>
-                <form class="condition-form">
+                <form>
                     <div class="form-group">
-                        <label>Handle:</label>
-                        <input type="text" id="handle" name="handle" class="form-control" placeholder="Handle">
+                        <label>Username: </label>
+                        <input type="text" id="handle" name="handle" class="form-control" placeholder="Username">
                     </div>
                     <div class="form-group">
-                        <label>Select status: </label>
-                        <ul id="status-list" class="checkbox-item-group list-inline"></ul>
+                        <span>Select submission status: </span>
+                        <div id="status-list"></div>
                     </div>
                     <div class="form-group">
-                        <div class="select-tag-mode-block">
-                            <label>Select tag mode: </label>
-                            <ul id="tag-mode-list" class="radio-btn-item-group list-inline">
-                                <li id="or-radio-btn-item" class="radio-btn-item">
-                                    <label class="radio-btn-item-label">OR</label>
-                                    <input type="radio" id="or-radio-btn" value="or" class="form-control radio-btn" name="tag_mode">
-                                </li>
-                                <li id="and-radio-btn-item" class="radio-btn-item">
-                                    <label class="radio-btn-item-label">AND</label>
-                                    <input type="radio" id="and-radio-btn" value="and" class="form-control radio-btn" name="tag_mode">
-                                </li>
-                            </ul>
+                        <div>Select mode: </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="or-radio-btn" value="or" class="form-check-input" name="tag_mode">
+                            <label class="form-check-input" for="or-radio-btn">OR</label>
                         </div>
-                        <div class="select-tag-block">
-                            <label>Tag:</label>
-                            <ul id="tag-list" class="checkbox-item-group list-inline"></ul>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="and-radio-btn" value="and" class="form-check-input" name="tag_mode">
+                            <label class="form-check-input" for="and-radio-btn">AND</label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-default" type="button" id="btn-search">Search</button>
+                        <span>Tag: </span>
+                        <div id="tag-list"></div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="button" id="search-btn">Search</button>
                     </div>
                 </form>
             </section>
