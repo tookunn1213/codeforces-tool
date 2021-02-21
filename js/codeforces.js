@@ -74,10 +74,10 @@ function showStatus() {
     }
 }
 function showAllTag(checkedTags) {
-    const xmlHttpRequest = new XMLHttpRequest();
-    xmlHttpRequest.onreadystatechange = () => {
-        if (xmlHttpRequest.readyState === XMLHttpRequest.DONE && xmlHttpRequest.status === 200) {
-            const json = JSON.parse(xmlHttpRequest.responseText);
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            const json = JSON.parse(xhr.responseText);
             const tags = json['tags'];
             const tagList = document.getElementById('tag-list');
             if (tagList) {
@@ -90,7 +90,7 @@ function showAllTag(checkedTags) {
                     const checkbox = document.createElement('input');
                     checkbox.setAttribute('type', 'checkbox');
                     checkbox.setAttribute('id', 'tag-' + tagName);
-                    checkbox.setAttribute('class', 'form-control checkbox');
+                    checkbox.setAttribute('class', 'tag form-control checkbox');
                     checkbox.setAttribute('name', 'tagName');
                     checkbox.value = tagName;
                     label.innerText = tag;
@@ -98,11 +98,13 @@ function showAllTag(checkedTags) {
                     tagList.append(li);
                 });
                 checkTags(checkedTags);
+                resolve(null);
             }
-        }
-    };
-    xmlHttpRequest.open('GET', './json/problem_tags.json');
-    xmlHttpRequest.send();
+            reject();
+        };
+        xhr.open('GET', './json/problem_tags.json');
+        xhr.send();
+    });
 }
 function fetchProblems() {
     return new Promise((resolve, reject) => {
@@ -328,7 +330,103 @@ function init() {
         });
     }
     showStatus();
-    showAllTag(checkedTags);
+    Promise.resolve().then(() => {
+        return showAllTag(checkedTags);
+    }).then(() => {
+        setOnClickToTagList();
+    });
     showProblems(apiParams, checkedTags, tagMode);
 }
+function setOnClickToTagList() {
+    var _a;
+    const tagListItem = (_a = document.getElementById('tag-list')) === null || _a === void 0 ? void 0 : _a.getElementsByClassName('checkbox-item');
+    if (tagListItem) {
+        for (const item of tagListItem) {
+            item.onclick = () => {
+                if (item.classList.contains('active')) {
+                    item.classList.remove('active');
+                    const tagList = item.querySelectorAll('input[name=tagName]:checked');
+                    tagList.forEach((element) => {
+                        element.removeAttribute('checked');
+                    });
+                }
+                else {
+                    item.classList.add('active');
+                    const tagList = item.querySelectorAll('input[name=tagName]:not(:checked)');
+                    tagList.forEach((element) => {
+                        element.setAttribute('checked', 'checked');
+                    });
+                }
+            };
+        }
+    }
+}
+function setOnClickToStatusList() {
+    var _a;
+    const statusListItem = (_a = document.getElementById('status-list')) === null || _a === void 0 ? void 0 : _a.getElementsByClassName('checkbox-item');
+    if (statusListItem) {
+        for (const item of statusListItem) {
+            item.onclick = () => {
+                if (item.classList.contains('active')) {
+                    item.classList.remove('active');
+                    const statusList = item.querySelectorAll('input[name=status]:checked');
+                    statusList.forEach((element) => {
+                        element.removeAttribute('checked');
+                    });
+                }
+                else {
+                    item.classList.add('active');
+                    const statusList = item.querySelectorAll('input[name=status]:not(:checked)');
+                    statusList.forEach((element) => {
+                        element.setAttribute('checked', 'checked');
+                    });
+                }
+            };
+        }
+    }
+}
 init();
+setOnClickToStatusList();
+const orRadioButtonItem = document.getElementById('or-radio-btn-item');
+if (orRadioButtonItem !== null) {
+    orRadioButtonItem.onclick = () => {
+        if (!orRadioButtonItem.classList.contains('active')) {
+            selectOrRadioButton();
+        }
+    };
+}
+const andRadioButtonItem = document.getElementById('and-radio-btn-item');
+if (andRadioButtonItem !== null) {
+    andRadioButtonItem.onclick = () => {
+        if (!andRadioButtonItem.classList.contains('active')) {
+            selectAndRadioButton();
+        }
+    };
+}
+function getTagMode() {
+    const radioOrTag = document.getElementById('or-radio-btn');
+    if (radioOrTag && radioOrTag.hasAttribute('checked') && radioOrTag.getAttribute('checked') === 'checked') {
+        return radioOrTag.value;
+    }
+    else {
+        const radioAndTag = document.getElementById('and-radio-btn');
+        return radioAndTag.value;
+    }
+}
+function makeTagName(delimiter) {
+    const tagList = [];
+    const tagElements = document.getElementsByClassName('tag');
+    for (const element of tagElements) {
+        if (element.hasAttribute('checked') && element.getAttribute('checked')) {
+            tagList.push(element.value);
+        }
+    }
+    return tagList.join(delimiter);
+}
+const searchButton = document.getElementById('btn-search');
+searchButton.onclick = () => {
+    const handle = document.getElementById('handle').value;
+    const tagMode = getTagMode();
+    const tagParams = makeTagName(',');
+    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}`;
+};

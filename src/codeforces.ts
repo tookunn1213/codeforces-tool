@@ -20,7 +20,7 @@ function getQueryString(): Map<string, string> {
 function selectOrRadioButton() {
 
     const orRadioButtonItem: HTMLElement | null = document.getElementById('or-radio-btn-item');
-    const orRadioButton: HTMLElement | null  = document.getElementById('or-radio-btn');
+    const orRadioButton: HTMLElement | null = document.getElementById('or-radio-btn');
 
     if (orRadioButtonItem && orRadioButton) {
         orRadioButtonItem.classList.add('active');
@@ -30,7 +30,7 @@ function selectOrRadioButton() {
         }
     }
 
-    const andRadioButtonItem: HTMLElement | null =  document.getElementById('and-radio-btn-item');
+    const andRadioButtonItem: HTMLElement | null = document.getElementById('and-radio-btn-item');
     const andRadioButton: HTMLElement | null = document.getElementById('and-radio-btn');
 
     if (andRadioButtonItem && andRadioButton) {
@@ -77,19 +77,19 @@ function showStatus() {
             const li: HTMLLIElement = document.createElement('li');
             li.setAttribute('id', 'status-' + statusId);
             li.setAttribute('class', 'checkbox-item checkbox-item--big ' + statusClass[index]);
-    
+
             const label: HTMLLabelElement = document.createElement('label');
             label.setAttribute('class', 'checkbox-item-label');
-    
+
             const checkbox: HTMLInputElement = document.createElement('input');
             checkbox.setAttribute('type', 'checkbox');
             checkbox.setAttribute('status', 'status-' + statusId);
             checkbox.setAttribute('class', 'form-control checkbox checkbox');
             checkbox.setAttribute('name', 'status');
             checkbox.value = statusId;
-    
+
             label.innerText = statusNameList[index];
-    
+
             li.append(label, checkbox);
             statusListElement.append(li);
         });
@@ -97,44 +97,47 @@ function showStatus() {
 }
 
 function showAllTag(checkedTags: Set<string>) {
-    const xmlHttpRequest: XMLHttpRequest = new XMLHttpRequest();
+    return new Promise((resolve, reject) => {
+        const xhr: XMLHttpRequest = new XMLHttpRequest();
 
-    xmlHttpRequest.onreadystatechange = () => {
-        if (xmlHttpRequest.readyState === XMLHttpRequest.DONE && xmlHttpRequest.status === 200) {
-            const json: any = JSON.parse(xmlHttpRequest.responseText);
-
+        xhr.onload = () => {
+            const json: any = JSON.parse(xhr.responseText);
             const tags: string[] = json['tags'];
             const tagList: HTMLElement | null = document.getElementById('tag-list');
 
             if (tagList) {
                 tags.forEach((tag: string) => {
                     const tagName = tag.replace(/ /g, '_');
-    
+
                     const li: HTMLLIElement = document.createElement('li');
                     li.setAttribute('class', 'checkbox-item checkbox-item--small');
-    
+
                     const label: HTMLLabelElement = document.createElement('label');
                     label.setAttribute('class', 'checkbox-item-label');
-    
+
                     const checkbox: HTMLInputElement = document.createElement('input');
                     checkbox.setAttribute('type', 'checkbox');
                     checkbox.setAttribute('id', 'tag-' + tagName);
-                    checkbox.setAttribute('class', 'form-control checkbox');
+                    checkbox.setAttribute('class', 'tag form-control checkbox');
                     checkbox.setAttribute('name', 'tagName');
                     checkbox.value = tagName;
-    
+
                     label.innerText = tag;
                     li.append(label, checkbox);
                     tagList.append(li);
                 });
-    
-                checkTags(checkedTags);
-            }
-        }
-    };
 
-    xmlHttpRequest.open('GET', './json/problem_tags.json');
-    xmlHttpRequest.send();
+                checkTags(checkedTags);
+
+                resolve(null);
+            }
+
+            reject();
+        };
+
+        xhr.open('GET', './json/problem_tags.json');
+        xhr.send();
+    });
 }
 
 interface Problem {
@@ -206,7 +209,7 @@ function fetchAccepted(handle: string) {
 }
 
 interface InnerProblem {
-    contestId:number,
+    contestId: number,
     index: string,
     name: string,
     type: string,
@@ -220,14 +223,14 @@ interface InnerMember {
 
 interface InnerAuthor {
     contestId: number,
-    members:InnerMember[],
+    members: InnerMember[],
     participantType: string,
     ghost: boolean,
     startTimeSeconds: number,
 }
 
 interface Submission {
-    id:number,
+    id: number,
     contestId: number,
     creationTimeSeconds: number,
     relativeTimeSeconds: number,
@@ -393,18 +396,18 @@ function showProblems(apiParams: APIParam, tagParams: Set<string>, tagMode: stri
                 return Promise.resolve();
             }).then(() => {
                 const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, tagParams, tagMode)
-    
+
                 const tableBody: HTMLElement | null = document.getElementById('table-body');
-            
+
                 if (tableBody !== null) {
                     tableBody.append(...trList);
                 }
             });
         } else {
             const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, tagParams, tagMode)
-    
+
             const tableBody: HTMLElement | null = document.getElementById('table-body');
-        
+
             if (tableBody !== null) {
                 tableBody.append(...trList);
             }
@@ -446,7 +449,7 @@ function init() {
         count: "5000"
     };
 
-    let tagMode: string = params.get('tag_mode')?? '';
+    let tagMode: string = params.get('tag_mode') ?? '';
 
     if (tagMode === "and") {
         selectAndRadioButton();
@@ -459,11 +462,11 @@ function init() {
     }
 
     const handleElement: HTMLInputElement = document.getElementById('handle') as HTMLInputElement;
-    handleElement.value = params.get('handle')?? '';
+    handleElement.value = params.get('handle') ?? '';
 
     const checkedTags: Set<string> = new Set<string>();
     if (params.has('tagName')) {
-        params.get('tagName')?? ''
+        params.get('tagName') ?? ''
             .split(',')
             .forEach((tag: string) => {
                 checkedTags.add(tag);
@@ -471,8 +474,122 @@ function init() {
     }
 
     showStatus();
-    showAllTag(checkedTags);
+    Promise.resolve().then(() => {
+        return showAllTag(checkedTags);
+    }).then(() => {
+        setOnClickToTagList();
+    });
     showProblems(apiParams, checkedTags, tagMode);
 }
 
+function setOnClickToTagList() {
+    const tagListItem: HTMLCollectionOf<HTMLElement> | undefined = document.getElementById('tag-list')
+        ?.getElementsByClassName('checkbox-item') as HTMLCollectionOf<HTMLElement>;
+
+    if (tagListItem) {
+        for (const item of tagListItem) {
+            item.onclick = () => {
+                if (item.classList.contains('active')) {
+                    item.classList.remove('active');
+
+                    const tagList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=tagName]:checked') as NodeListOf<HTMLElement>;
+                    tagList.forEach((element: HTMLElement) => {
+                        element.removeAttribute('checked');
+                    });
+                } else {
+                    item.classList.add('active');
+
+                    const tagList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=tagName]:not(:checked)') as NodeListOf<HTMLElement>;
+                    tagList.forEach((element: HTMLElement) => {
+                        element.setAttribute('checked', 'checked');
+                    });
+                }
+            }
+        }
+    }
+}
+
+function setOnClickToStatusList() {
+    const statusListItem: HTMLCollectionOf<HTMLElement> | undefined = document.getElementById('status-list')
+        ?.getElementsByClassName('checkbox-item') as HTMLCollectionOf<HTMLElement>;
+
+    if (statusListItem) {
+        for (const item of statusListItem) {
+            item.onclick = () => {
+                if (item.classList.contains('active')) {
+                    item.classList.remove('active');
+
+                    const statusList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=status]:checked') as NodeListOf<HTMLElement>;
+                    statusList.forEach((element: HTMLElement) => {
+                        element.removeAttribute('checked');
+                    });
+                } else {
+                    item.classList.add('active');
+
+                    const statusList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=status]:not(:checked)') as NodeListOf<HTMLElement>;
+                    statusList.forEach((element: HTMLElement) => {
+                        element.setAttribute('checked', 'checked');
+                    });
+                }
+            }
+        }
+    }
+}
+
+function getTagMode(): string {
+    const radioOrTag: HTMLInputElement = document.getElementById('or-radio-btn') as HTMLInputElement;
+
+    if (radioOrTag && radioOrTag.hasAttribute('checked') && radioOrTag.getAttribute('checked') === 'checked') {
+        return radioOrTag.value;
+    } else {
+        const radioAndTag: HTMLInputElement = document.getElementById('and-radio-btn') as HTMLInputElement;
+        return radioAndTag.value;
+    }
+}
+
+function makeTagName(delimiter: string): string {
+    const tagList: string[] = [];
+
+    const tagElements: HTMLCollectionOf<HTMLInputElement> = document.getElementsByClassName('tag') as HTMLCollectionOf<HTMLInputElement>;
+
+    for (const element of tagElements) {
+        if (element.hasAttribute('checked') && element.getAttribute('checked')) {
+            tagList.push(element.value);
+        }
+    }
+
+    return tagList.join(delimiter);
+}
+
 init();
+setOnClickToStatusList();
+
+const orRadioButtonItem: HTMLElement | null = document.getElementById('or-radio-btn-item');
+
+if (orRadioButtonItem !== null) {
+    orRadioButtonItem.onclick = () => {
+        if (!orRadioButtonItem.classList.contains('active')) {
+            selectOrRadioButton();
+        }
+    };
+}
+
+const andRadioButtonItem: HTMLElement | null = document.getElementById('and-radio-btn-item');
+
+if (andRadioButtonItem !== null) {
+    andRadioButtonItem.onclick = () => {
+        if (!andRadioButtonItem.classList.contains('active')) {
+            selectAndRadioButton();
+        }
+    };
+}
+
+const searchButton: HTMLButtonElement = document.getElementById('btn-search') as HTMLButtonElement;
+
+searchButton.onclick = () => {
+    const handle = (document.getElementById('handle') as HTMLInputElement).value;
+    const tagMode = getTagMode();
+    const tagParams = makeTagName(',');
+
+    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}`;
+};
