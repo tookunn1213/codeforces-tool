@@ -14,102 +14,67 @@ function getQueryString() {
     return retParam;
 }
 function selectOrRadioButton() {
-    const orRadioButtonItem = document.getElementById('or-radio-btn-item');
     const orRadioButton = document.getElementById('or-radio-btn');
-    if (orRadioButtonItem && orRadioButton) {
-        orRadioButtonItem.classList.add('active');
-        if (!orRadioButton.hasAttribute('checked')) {
-            orRadioButton.setAttribute('checked', 'checked');
-        }
-    }
-    const andRadioButtonItem = document.getElementById('and-radio-btn-item');
-    const andRadioButton = document.getElementById('and-radio-btn');
-    if (andRadioButtonItem && andRadioButton) {
-        andRadioButtonItem.classList.remove('active');
-        if (andRadioButton.hasAttribute('checked')) {
-            andRadioButton.removeAttribute('checked');
-        }
-    }
+    orRadioButton.checked = true;
 }
 function selectAndRadioButton() {
-    const orRadioButtonItem = document.getElementById('or-radio-btn-item');
-    const orRadioButton = document.getElementById('or-radio-btn');
-    if (orRadioButtonItem !== null && orRadioButton !== null) {
-        orRadioButtonItem.classList.remove('active');
-        if (orRadioButton.hasAttribute('checked')) {
-            orRadioButton.removeAttribute('checked');
-        }
-    }
-    const andRadioButtonItem = document.getElementById('and-radio-btn-item');
     const andRadioButton = document.getElementById('and-radio-btn');
-    if (andRadioButtonItem !== null && andRadioButton !== null) {
-        andRadioButtonItem.classList.add('active');
-        if (!andRadioButton.hasAttribute('checked')) {
-            andRadioButton.setAttribute('checked', 'checked');
-        }
-    }
+    andRadioButton.checked = true;
 }
 function showStatus(currentStatus) {
     const statusIdList = ['ac', 'wa', 'nosubmit'];
     const statusNameList = ['AC', 'WA', 'NoSubmit'];
     const statusClass = ['accepted', 'wronganswer', 'nosubmit'];
     const statusListElement = document.getElementById('status-list');
-    if (statusListElement) {
-        statusIdList.forEach((statusId, index) => {
-            const li = document.createElement('li');
-            li.setAttribute('id', 'status-' + statusId);
-            const checked = currentStatus.has(statusId);
-            const active = checked ? ' active' : '';
-            li.setAttribute('class', `checkbox-item checkbox-item--big  ${active} ${statusClass[index]}`);
-            const label = document.createElement('label');
-            label.setAttribute('class', 'checkbox-item-label');
-            const checkbox = document.createElement('input');
-            checkbox.setAttribute('type', 'checkbox');
-            checkbox.setAttribute('status', 'status-' + statusId);
-            checkbox.setAttribute('class', 'form-control checkbox checkbox');
-            checkbox.setAttribute('name', 'status');
-            checkbox.value = statusId;
-            if (checked) {
-                checkbox.setAttribute('checked', 'checked');
-            }
-            label.innerText = statusNameList[index];
-            li.append(label, checkbox);
-            statusListElement.append(li);
-        });
-    }
+    statusIdList.forEach((statusId, index) => {
+        const div = document.createElement('div');
+        const checked = currentStatus.has(statusId);
+        const active = checked ? ' active' : '';
+        div.setAttribute('class', `form-check form-check-inline ${active} ${statusClass[index]}`);
+        const label = document.createElement('label');
+        label.setAttribute('class', 'form-check-label');
+        label.setAttribute('for', `status-${statusId}`);
+        const checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('id', `status-${statusId}`);
+        checkbox.setAttribute('class', 'form-check-input');
+        checkbox.setAttribute('name', 'status');
+        checkbox.value = statusId;
+        if (checked) {
+            checkbox.checked = true;
+        }
+        label.innerText = statusNameList[index];
+        div.append(checkbox, label);
+        statusListElement.append(div);
+    });
 }
 function showAllTag(checkedTags) {
-    return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = () => {
-            const json = JSON.parse(xhr.responseText);
-            const tags = json['tags'];
-            const tagList = document.getElementById('tag-list');
-            if (tagList) {
-                tags.forEach((tag) => {
-                    const tagName = tag.replace(/ /g, '_');
-                    const li = document.createElement('li');
-                    li.setAttribute('class', 'checkbox-item checkbox-item--small');
-                    const label = document.createElement('label');
-                    label.setAttribute('class', 'checkbox-item-label');
-                    const checkbox = document.createElement('input');
-                    checkbox.setAttribute('type', 'checkbox');
-                    checkbox.setAttribute('id', 'tag-' + tagName);
-                    checkbox.setAttribute('class', 'tag form-control checkbox');
-                    checkbox.setAttribute('name', 'tagName');
-                    checkbox.value = tagName;
-                    label.innerText = tag;
-                    li.append(label, checkbox);
-                    tagList.append(li);
-                });
-                checkTags(checkedTags);
-                resolve(null);
-            }
-            reject();
-        };
-        xhr.open('GET', './json/problem_tags.json');
-        xhr.send();
-    });
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+        const json = JSON.parse(xhr.responseText);
+        const tags = json['tags'];
+        const tagList = document.getElementById('tag-list');
+        tags.forEach((tag) => {
+            const tagName = tag.replace(/ /g, '_');
+            const div = document.createElement('div');
+            div.setAttribute('class', 'form-check form-check-inline');
+            const label = document.createElement('label');
+            label.setAttribute('class', 'form-check-label');
+            label.setAttribute('for', 'tag-' + tagName);
+            label.innerText = tag;
+            const checkbox = document.createElement('input');
+            checkbox.setAttribute('type', 'checkbox');
+            checkbox.setAttribute('id', 'tag-' + tagName);
+            checkbox.setAttribute('class', 'tag form-check-input');
+            checkbox.setAttribute('name', 'tagName');
+            checkbox.value = tagName;
+            div.append(checkbox, label);
+            tagList.append(div);
+        });
+        checkTags(checkedTags);
+    };
+    xhr.open('GET', './json/problem_tags.json');
+    xhr.send();
 }
 function fetchProblems() {
     return new Promise((resolve, reject) => {
@@ -310,12 +275,7 @@ function checkTags(tags) {
     tags.forEach((tag) => {
         const escapedTag = escapeSelector(tag);
         const tagElement = document.getElementById('tag-' + escapedTag);
-        if (tagElement === null) {
-            return;
-        }
-        const checkBoxItem = tagElement.closest('.checkbox-item');
-        checkBoxItem === null || checkBoxItem === void 0 ? void 0 : checkBoxItem.classList.add('active');
-        tagElement.setAttribute('checked', 'checked');
+        tagElement.checked = true;
     });
 }
 function init() {
@@ -348,64 +308,12 @@ function init() {
     }
     const checkedStatus = new Set(((_e = params.get('status')) !== null && _e !== void 0 ? _e : '').split(','));
     showStatus(checkedStatus);
-    Promise.resolve().then(() => {
-        return showAllTag(checkedTags);
-    }).then(() => {
-        setOnClickToTagList();
-    });
+    showAllTag(checkedTags);
     showProblems(apiParams, checkedStatus, checkedTags, tagMode);
-}
-function setOnClickToTagList() {
-    var _a;
-    const tagListItem = (_a = document.getElementById('tag-list')) === null || _a === void 0 ? void 0 : _a.getElementsByClassName('checkbox-item');
-    if (tagListItem) {
-        for (const item of tagListItem) {
-            item.onclick = () => {
-                if (item.classList.contains('active')) {
-                    item.classList.remove('active');
-                    const tagList = item.querySelectorAll('input[name=tagName]:checked');
-                    tagList.forEach((element) => {
-                        element.removeAttribute('checked');
-                    });
-                }
-                else {
-                    item.classList.add('active');
-                    const tagList = item.querySelectorAll('input[name=tagName]:not(:checked)');
-                    tagList.forEach((element) => {
-                        element.setAttribute('checked', 'checked');
-                    });
-                }
-            };
-        }
-    }
-}
-function setOnClickToStatusList() {
-    var _a;
-    const statusListItem = (_a = document.getElementById('status-list')) === null || _a === void 0 ? void 0 : _a.getElementsByClassName('checkbox-item');
-    if (statusListItem) {
-        for (const item of statusListItem) {
-            item.onclick = () => {
-                if (item.classList.contains('active')) {
-                    item.classList.remove('active');
-                    const statusList = item.querySelectorAll('input[name=status]:checked');
-                    statusList.forEach((element) => {
-                        element.removeAttribute('checked');
-                    });
-                }
-                else {
-                    item.classList.add('active');
-                    const statusList = item.querySelectorAll('input[name=status]:not(:checked)');
-                    statusList.forEach((element) => {
-                        element.setAttribute('checked', 'checked');
-                    });
-                }
-            };
-        }
-    }
 }
 function getTagMode() {
     const radioOrTag = document.getElementById('or-radio-btn');
-    if (radioOrTag && radioOrTag.hasAttribute('checked') && radioOrTag.getAttribute('checked') === 'checked') {
+    if (radioOrTag.checked) {
         return radioOrTag.value;
     }
     else {
@@ -413,49 +321,32 @@ function getTagMode() {
         return radioAndTag.value;
     }
 }
-function makeTagName(delimiter) {
+function makeTagName() {
     const tagList = [];
     const tagElements = document.getElementsByClassName('tag');
     for (const element of tagElements) {
-        if (element.hasAttribute('checked') && element.getAttribute('checked')) {
+        if (element.checked) {
             tagList.push(element.value);
         }
     }
-    return tagList.join(delimiter);
+    return tagList.join(',');
 }
 function getStatus() {
     const elements = document.getElementsByName('status');
     const status = [];
     elements.forEach((element) => {
-        if (element.getAttribute('checked') === 'checked') {
+        if (element.checked) {
             status.push(element.value);
         }
     });
-    return status;
+    return status.join(',');
 }
 init();
-setOnClickToStatusList();
-const orRadioButtonItem = document.getElementById('or-radio-btn-item');
-if (orRadioButtonItem !== null) {
-    orRadioButtonItem.onclick = () => {
-        if (!orRadioButtonItem.classList.contains('active')) {
-            selectOrRadioButton();
-        }
-    };
-}
-const andRadioButtonItem = document.getElementById('and-radio-btn-item');
-if (andRadioButtonItem !== null) {
-    andRadioButtonItem.onclick = () => {
-        if (!andRadioButtonItem.classList.contains('active')) {
-            selectAndRadioButton();
-        }
-    };
-}
-const searchButton = document.getElementById('btn-search');
+const searchButton = document.getElementById('search-btn');
 searchButton.onclick = () => {
     const handle = document.getElementById('handle').value;
     const tagMode = getTagMode();
-    const tagParams = makeTagName(',');
-    const status = getStatus().join(',');
+    const tagParams = makeTagName();
+    const status = getStatus();
     window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`;
 };

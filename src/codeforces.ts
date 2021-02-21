@@ -18,51 +18,13 @@ function getQueryString(): Map<string, string> {
 }
 
 function selectOrRadioButton() {
-
-    const orRadioButtonItem: HTMLElement | null = document.getElementById('or-radio-btn-item');
-    const orRadioButton: HTMLElement | null = document.getElementById('or-radio-btn');
-
-    if (orRadioButtonItem && orRadioButton) {
-        orRadioButtonItem.classList.add('active');
-
-        if (!orRadioButton.hasAttribute('checked')) {
-            orRadioButton.setAttribute('checked', 'checked');
-        }
-    }
-
-    const andRadioButtonItem: HTMLElement | null = document.getElementById('and-radio-btn-item');
-    const andRadioButton: HTMLElement | null = document.getElementById('and-radio-btn');
-
-    if (andRadioButtonItem && andRadioButton) {
-        andRadioButtonItem.classList.remove('active');
-
-        if (andRadioButton.hasAttribute('checked')) {
-            andRadioButton.removeAttribute('checked');
-        }
-    }
+    const orRadioButton: HTMLInputElement = document.getElementById('or-radio-btn') as HTMLInputElement;
+    orRadioButton.checked = true;
 }
 
 function selectAndRadioButton() {
-    const orRadioButtonItem: HTMLElement | null = document.getElementById('or-radio-btn-item');
-    const orRadioButton: HTMLElement | null = document.getElementById('or-radio-btn');
-
-    if (orRadioButtonItem !== null && orRadioButton !== null) {
-        orRadioButtonItem.classList.remove('active');
-
-        if (orRadioButton.hasAttribute('checked')) {
-            orRadioButton.removeAttribute('checked');
-        }
-    }
-
-    const andRadioButtonItem: HTMLElement | null = document.getElementById('and-radio-btn-item');
-    const andRadioButton: HTMLElement | null = document.getElementById('and-radio-btn');
-
-    if (andRadioButtonItem !== null && andRadioButton !== null) {
-        andRadioButtonItem.classList.add('active');
-        if (!andRadioButton.hasAttribute('checked')) {
-            andRadioButton.setAttribute('checked', 'checked');
-        }
-    }
+    const andRadioButton: HTMLInputElement = document.getElementById('and-radio-btn') as HTMLInputElement;
+    andRadioButton.checked = true;
 }
 
 function showStatus(currentStatus: Set<string>) {
@@ -70,82 +32,73 @@ function showStatus(currentStatus: Set<string>) {
     const statusNameList: string[] = ['AC', 'WA', 'NoSubmit'];
     const statusClass = ['accepted', 'wronganswer', 'nosubmit'];
 
-    const statusListElement: HTMLElement | null = document.getElementById('status-list');
+    const statusListElement: HTMLDivElement = document.getElementById('status-list') as HTMLDivElement;
 
-    if (statusListElement) {
-        statusIdList.forEach((statusId: string, index: number) => {
-            const li: HTMLLIElement = document.createElement('li');
-            li.setAttribute('id', 'status-' + statusId);
-            
-            const checked: boolean = currentStatus.has(statusId);
+    statusIdList.forEach((statusId: string, index: number) => {
+        const div: HTMLDivElement = document.createElement('div');
 
-            const active:string = checked ? ' active' : '';
-            li.setAttribute('class', `checkbox-item checkbox-item--big  ${active} ${statusClass[index]}`);
+        const checked: boolean = currentStatus.has(statusId);
 
-            const label: HTMLLabelElement = document.createElement('label');
-            label.setAttribute('class', 'checkbox-item-label');
+        const active: string = checked ? ' active' : '';
+        div.setAttribute('class', `form-check form-check-inline ${active} ${statusClass[index]}`);
 
-            const checkbox: HTMLInputElement = document.createElement('input');
-            checkbox.setAttribute('type', 'checkbox');
-            checkbox.setAttribute('status', 'status-' + statusId);
-            checkbox.setAttribute('class', 'form-control checkbox checkbox');
-            checkbox.setAttribute('name', 'status');
-            checkbox.value = statusId;
+        const label: HTMLLabelElement = document.createElement('label');
+        label.setAttribute('class', 'form-check-label');
+        label.setAttribute('for', `status-${statusId}`);
 
-            if (checked) {
-                checkbox.setAttribute('checked', 'checked');
-            }
+        const checkbox: HTMLInputElement = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('id', `status-${statusId}`);
+        checkbox.setAttribute('class', 'form-check-input');
+        checkbox.setAttribute('name', 'status');
+        checkbox.value = statusId;
 
-            label.innerText = statusNameList[index];
+        if (checked) {
+            checkbox.checked = true;
+        }
 
-            li.append(label, checkbox);
-            statusListElement.append(li);
-        });
-    }
+        label.innerText = statusNameList[index];
+
+        div.append(checkbox, label);
+        statusListElement.append(div);
+    });
 }
 
 function showAllTag(checkedTags: Set<string>) {
-    return new Promise((resolve, reject) => {
-        const xhr: XMLHttpRequest = new XMLHttpRequest();
+    const xhr: XMLHttpRequest = new XMLHttpRequest();
 
-        xhr.onload = () => {
-            const json: any = JSON.parse(xhr.responseText);
-            const tags: string[] = json['tags'];
-            const tagList: HTMLElement | null = document.getElementById('tag-list');
+    xhr.onload = () => {
+        const json: any = JSON.parse(xhr.responseText);
+        const tags: string[] = json['tags'];
+        const tagList: HTMLDivElement = document.getElementById('tag-list') as HTMLDivElement;
 
-            if (tagList) {
-                tags.forEach((tag: string) => {
-                    const tagName = tag.replace(/ /g, '_');
+        tags.forEach((tag: string) => {
+            const tagName = tag.replace(/ /g, '_');
 
-                    const li: HTMLLIElement = document.createElement('li');
-                    li.setAttribute('class', 'checkbox-item checkbox-item--small');
+            const div: HTMLDivElement = document.createElement('div');
+            div.setAttribute('class', 'form-check form-check-inline');
 
-                    const label: HTMLLabelElement = document.createElement('label');
-                    label.setAttribute('class', 'checkbox-item-label');
+            const label: HTMLLabelElement = document.createElement('label');
+            label.setAttribute('class', 'form-check-label');
+            label.setAttribute('for', 'tag-' + tagName);
+            label.innerText = tag;
 
-                    const checkbox: HTMLInputElement = document.createElement('input');
-                    checkbox.setAttribute('type', 'checkbox');
-                    checkbox.setAttribute('id', 'tag-' + tagName);
-                    checkbox.setAttribute('class', 'tag form-control checkbox');
-                    checkbox.setAttribute('name', 'tagName');
-                    checkbox.value = tagName;
+            const checkbox: HTMLInputElement = document.createElement('input');
+            checkbox.setAttribute('type', 'checkbox');
+            checkbox.setAttribute('id', 'tag-' + tagName);
+            checkbox.setAttribute('class', 'tag form-check-input');
+            checkbox.setAttribute('name', 'tagName');
+            checkbox.value = tagName;
 
-                    label.innerText = tag;
-                    li.append(label, checkbox);
-                    tagList.append(li);
-                });
+            div.append(checkbox, label);
+            tagList.append(div);
+        });
 
-                checkTags(checkedTags);
+        checkTags(checkedTags);
+    };
 
-                resolve(null);
-            }
-
-            reject();
-        };
-
-        xhr.open('GET', './json/problem_tags.json');
-        xhr.send();
-    });
+    xhr.open('GET', './json/problem_tags.json');
+    xhr.send();
 }
 
 interface Problem {
@@ -444,16 +397,8 @@ function escapeSelector(str: string): string {
 function checkTags(tags: Set<string>) {
     tags.forEach((tag: string) => {
         const escapedTag: string = escapeSelector(tag);
-        const tagElement: HTMLElement | null = document.getElementById('tag-' + escapedTag);
-
-        if (tagElement === null) {
-            return;
-        }
-
-        const checkBoxItem: HTMLElement | null = tagElement.closest('.checkbox-item');
-        checkBoxItem?.classList
-            .add('active');
-        tagElement.setAttribute('checked', 'checked');
+        const tagElement: HTMLInputElement = document.getElementById('tag-' + escapedTag) as HTMLInputElement;
+        tagElement.checked = true;
     });
 }
 
@@ -495,74 +440,16 @@ function init() {
             });
     }
 
-    const checkedStatus: Set<string> = new Set<string>((params.get('status')?? '').split(','));
+    const checkedStatus: Set<string> = new Set<string>((params.get('status') ?? '').split(','));
     showStatus(checkedStatus);
-    Promise.resolve().then(() => {
-        return showAllTag(checkedTags);
-    }).then(() => {
-        setOnClickToTagList();
-    });
+    showAllTag(checkedTags);
     showProblems(apiParams, checkedStatus, checkedTags, tagMode);
-}
-
-function setOnClickToTagList() {
-    const tagListItem: HTMLCollectionOf<HTMLElement> | undefined = document.getElementById('tag-list')
-        ?.getElementsByClassName('checkbox-item') as HTMLCollectionOf<HTMLElement>;
-
-    if (tagListItem) {
-        for (const item of tagListItem) {
-            item.onclick = () => {
-                if (item.classList.contains('active')) {
-                    item.classList.remove('active');
-
-                    const tagList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=tagName]:checked') as NodeListOf<HTMLElement>;
-                    tagList.forEach((element: HTMLElement) => {
-                        element.removeAttribute('checked');
-                    });
-                } else {
-                    item.classList.add('active');
-
-                    const tagList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=tagName]:not(:checked)') as NodeListOf<HTMLElement>;
-                    tagList.forEach((element: HTMLElement) => {
-                        element.setAttribute('checked', 'checked');
-                    });
-                }
-            }
-        }
-    }
-}
-
-function setOnClickToStatusList() {
-    const statusListItem: HTMLCollectionOf<HTMLElement> | undefined = document.getElementById('status-list')
-        ?.getElementsByClassName('checkbox-item') as HTMLCollectionOf<HTMLElement>;
-
-    if (statusListItem) {
-        for (const item of statusListItem) {
-            item.onclick = () => {
-                if (item.classList.contains('active')) {
-                    item.classList.remove('active');
-
-                    const statusList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=status]:checked') as NodeListOf<HTMLElement>;
-                    statusList.forEach((element: HTMLElement) => {
-                        element.removeAttribute('checked');
-                    });
-                } else {
-                    item.classList.add('active');
-
-                    const statusList: NodeListOf<HTMLElement> = item.querySelectorAll('input[name=status]:not(:checked)') as NodeListOf<HTMLElement>;
-                    statusList.forEach((element: HTMLElement) => {
-                        element.setAttribute('checked', 'checked');
-                    });
-                }
-            }
-        }
-    }
 }
 
 function getTagMode(): string {
     const radioOrTag: HTMLInputElement = document.getElementById('or-radio-btn') as HTMLInputElement;
 
-    if (radioOrTag && radioOrTag.hasAttribute('checked') && radioOrTag.getAttribute('checked') === 'checked') {
+    if (radioOrTag.checked) {
         return radioOrTag.value;
     } else {
         const radioAndTag: HTMLInputElement = document.getElementById('and-radio-btn') as HTMLInputElement;
@@ -570,63 +457,41 @@ function getTagMode(): string {
     }
 }
 
-function makeTagName(delimiter: string): string {
+function makeTagName(): string {
     const tagList: string[] = [];
-
     const tagElements: HTMLCollectionOf<HTMLInputElement> = document.getElementsByClassName('tag') as HTMLCollectionOf<HTMLInputElement>;
 
     for (const element of tagElements) {
-        if (element.hasAttribute('checked') && element.getAttribute('checked')) {
+        if (element.checked) {
             tagList.push(element.value);
         }
     }
 
-    return tagList.join(delimiter);
+    return tagList.join(',');
 }
 
-function getStatus(): string[] {
+function getStatus(): string {
     const elements: NodeListOf<HTMLInputElement> = document.getElementsByName('status') as NodeListOf<HTMLInputElement>;
-
     const status: string[] = [];
+
     elements.forEach((element) => {
-        if (element.getAttribute('checked') === 'checked') {
+        if (element.checked) {
             status.push(element.value);
         }
     });
 
-    return status;
+    return status.join(',');
 }
 
 init();
-setOnClickToStatusList();
 
-const orRadioButtonItem: HTMLElement | null = document.getElementById('or-radio-btn-item');
-
-if (orRadioButtonItem !== null) {
-    orRadioButtonItem.onclick = () => {
-        if (!orRadioButtonItem.classList.contains('active')) {
-            selectOrRadioButton();
-        }
-    };
-}
-
-const andRadioButtonItem: HTMLElement | null = document.getElementById('and-radio-btn-item');
-
-if (andRadioButtonItem !== null) {
-    andRadioButtonItem.onclick = () => {
-        if (!andRadioButtonItem.classList.contains('active')) {
-            selectAndRadioButton();
-        }
-    };
-}
-
-const searchButton: HTMLButtonElement = document.getElementById('btn-search') as HTMLButtonElement;
+const searchButton: HTMLButtonElement = document.getElementById('search-btn') as HTMLButtonElement;
 
 searchButton.onclick = () => {
     const handle = (document.getElementById('handle') as HTMLInputElement).value;
     const tagMode = getTagMode();
-    const tagParams = makeTagName(',');
-    const status = getStatus().join(',');
+    const tagParams = makeTagName();
+    const status = getStatus();
 
     window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`;
 };
