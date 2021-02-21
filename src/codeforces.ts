@@ -65,7 +65,7 @@ function selectAndRadioButton() {
     }
 }
 
-function showStatus() {
+function showStatus(currentStatus: Set<string>) {
     const statusIdList: string[] = ['ac', 'wa', 'nosubmit'];
     const statusNameList: string[] = ['AC', 'WA', 'NoSubmit'];
     const statusClass = ['accepted', 'wronganswer', 'nosubmit'];
@@ -76,7 +76,11 @@ function showStatus() {
         statusIdList.forEach((statusId: string, index: number) => {
             const li: HTMLLIElement = document.createElement('li');
             li.setAttribute('id', 'status-' + statusId);
-            li.setAttribute('class', 'checkbox-item checkbox-item--big ' + statusClass[index]);
+            
+            const checked: boolean = currentStatus.has(statusId);
+
+            const active:string = checked ? ' active' : '';
+            li.setAttribute('class', `checkbox-item checkbox-item--big  ${active} ${statusClass[index]}`);
 
             const label: HTMLLabelElement = document.createElement('label');
             label.setAttribute('class', 'checkbox-item-label');
@@ -87,6 +91,10 @@ function showStatus() {
             checkbox.setAttribute('class', 'form-control checkbox checkbox');
             checkbox.setAttribute('name', 'status');
             checkbox.value = statusId;
+
+            if (checked) {
+                checkbox.setAttribute('checked', 'checked');
+            }
 
             label.innerText = statusNameList[index];
 
@@ -473,7 +481,8 @@ function init() {
             });
     }
 
-    showStatus();
+    const checkedStatus: Set<string> = new Set<string>((params.get('status')?? '').split(','));
+    showStatus(checkedStatus);
     Promise.resolve().then(() => {
         return showAllTag(checkedTags);
     }).then(() => {
@@ -561,6 +570,19 @@ function makeTagName(delimiter: string): string {
     return tagList.join(delimiter);
 }
 
+function getStatus(): string[] {
+    const elements: NodeListOf<HTMLInputElement> = document.getElementsByName('status') as NodeListOf<HTMLInputElement>;
+
+    const status: string[] = [];
+    elements.forEach((element) => {
+        if (element.getAttribute('checked') === 'checked') {
+            status.push(element.value);
+        }
+    });
+
+    return status;
+}
+
 init();
 setOnClickToStatusList();
 
@@ -590,6 +612,7 @@ searchButton.onclick = () => {
     const handle = (document.getElementById('handle') as HTMLInputElement).value;
     const tagMode = getTagMode();
     const tagParams = makeTagName(',');
+    const status = getStatus().join(',');
 
-    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}`;
+    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`;
 };

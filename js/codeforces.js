@@ -49,7 +49,7 @@ function selectAndRadioButton() {
         }
     }
 }
-function showStatus() {
+function showStatus(currentStatus) {
     const statusIdList = ['ac', 'wa', 'nosubmit'];
     const statusNameList = ['AC', 'WA', 'NoSubmit'];
     const statusClass = ['accepted', 'wronganswer', 'nosubmit'];
@@ -58,7 +58,9 @@ function showStatus() {
         statusIdList.forEach((statusId, index) => {
             const li = document.createElement('li');
             li.setAttribute('id', 'status-' + statusId);
-            li.setAttribute('class', 'checkbox-item checkbox-item--big ' + statusClass[index]);
+            const checked = currentStatus.has(statusId);
+            const active = checked ? ' active' : '';
+            li.setAttribute('class', `checkbox-item checkbox-item--big  ${active} ${statusClass[index]}`);
             const label = document.createElement('label');
             label.setAttribute('class', 'checkbox-item-label');
             const checkbox = document.createElement('input');
@@ -67,6 +69,9 @@ function showStatus() {
             checkbox.setAttribute('class', 'form-control checkbox checkbox');
             checkbox.setAttribute('name', 'status');
             checkbox.value = statusId;
+            if (checked) {
+                checkbox.setAttribute('checked', 'checked');
+            }
             label.innerText = statusNameList[index];
             li.append(label, checkbox);
             statusListElement.append(li);
@@ -302,7 +307,7 @@ function checkTags(tags) {
     });
 }
 function init() {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     let params = getQueryString();
     let apiParams = {
         handle: "",
@@ -329,7 +334,8 @@ function init() {
             checkedTags.add(tag);
         });
     }
-    showStatus();
+    const checkedStatus = new Set(((_e = params.get('status')) !== null && _e !== void 0 ? _e : '').split(','));
+    showStatus(checkedStatus);
     Promise.resolve().then(() => {
         return showAllTag(checkedTags);
     }).then(() => {
@@ -385,24 +391,6 @@ function setOnClickToStatusList() {
         }
     }
 }
-init();
-setOnClickToStatusList();
-const orRadioButtonItem = document.getElementById('or-radio-btn-item');
-if (orRadioButtonItem !== null) {
-    orRadioButtonItem.onclick = () => {
-        if (!orRadioButtonItem.classList.contains('active')) {
-            selectOrRadioButton();
-        }
-    };
-}
-const andRadioButtonItem = document.getElementById('and-radio-btn-item');
-if (andRadioButtonItem !== null) {
-    andRadioButtonItem.onclick = () => {
-        if (!andRadioButtonItem.classList.contains('active')) {
-            selectAndRadioButton();
-        }
-    };
-}
 function getTagMode() {
     const radioOrTag = document.getElementById('or-radio-btn');
     if (radioOrTag && radioOrTag.hasAttribute('checked') && radioOrTag.getAttribute('checked') === 'checked') {
@@ -423,10 +411,39 @@ function makeTagName(delimiter) {
     }
     return tagList.join(delimiter);
 }
+function getStatus() {
+    const elements = document.getElementsByName('status');
+    const status = [];
+    elements.forEach((element) => {
+        if (element.getAttribute('checked') === 'checked') {
+            status.push(element.value);
+        }
+    });
+    return status;
+}
+init();
+setOnClickToStatusList();
+const orRadioButtonItem = document.getElementById('or-radio-btn-item');
+if (orRadioButtonItem !== null) {
+    orRadioButtonItem.onclick = () => {
+        if (!orRadioButtonItem.classList.contains('active')) {
+            selectOrRadioButton();
+        }
+    };
+}
+const andRadioButtonItem = document.getElementById('and-radio-btn-item');
+if (andRadioButtonItem !== null) {
+    andRadioButtonItem.onclick = () => {
+        if (!andRadioButtonItem.classList.contains('active')) {
+            selectAndRadioButton();
+        }
+    };
+}
 const searchButton = document.getElementById('btn-search');
 searchButton.onclick = () => {
     const handle = document.getElementById('handle').value;
     const tagMode = getTagMode();
     const tagParams = makeTagName(',');
-    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}`;
+    const status = getStatus().join(',');
+    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`;
 };
