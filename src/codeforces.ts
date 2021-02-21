@@ -488,8 +488,8 @@ function init() {
 
     const checkedTags: Set<string> = new Set<string>();
     if (params.has('tagName')) {
-        params.get('tagName') ?? ''
-            .split(',')
+        const tagName: string = params.get('tagName') ?? '';
+        tagName.split(',')
             .forEach((tag: string) => {
                 checkedTags.add(tag);
             });

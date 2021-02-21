@@ -340,8 +340,8 @@ function init() {
     handleElement.value = (_c = params.get('handle')) !== null && _c !== void 0 ? _c : '';
     const checkedTags = new Set();
     if (params.has('tagName')) {
-        (_d = params.get('tagName')) !== null && _d !== void 0 ? _d : ''
-            .split(',')
+        const tagName = (_d = params.get('tagName')) !== null && _d !== void 0 ? _d : '';
+        tagName.split(',')
             .forEach((tag) => {
             checkedTags.add(tag);
         });
