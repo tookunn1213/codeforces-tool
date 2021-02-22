@@ -22,30 +22,11 @@ function selectAndRadioButton() {
     andRadioButton.checked = true;
 }
 function showStatus(currentStatus) {
-    const statusIdList = ['ac', 'wa', 'nosubmit'];
-    const statusNameList = ['AC', 'WA', 'NoSubmit'];
-    const statusClass = ['accepted', 'wronganswer', 'nosubmit'];
-    const statusListElement = document.getElementById('status-list');
-    statusIdList.forEach((statusId, index) => {
-        const div = document.createElement('div');
-        const checked = currentStatus.has(statusId);
-        const active = checked ? ' active' : '';
-        div.setAttribute('class', `form-check form-check-inline ${active} ${statusClass[index]}`);
-        const label = document.createElement('label');
-        label.setAttribute('class', 'form-check-label');
-        label.setAttribute('for', `status-${statusId}`);
-        const checkbox = document.createElement('input');
-        checkbox.setAttribute('type', 'checkbox');
-        checkbox.setAttribute('id', `status-${statusId}`);
-        checkbox.setAttribute('class', 'form-check-input');
-        checkbox.setAttribute('name', 'status');
-        checkbox.value = statusId;
-        if (checked) {
-            checkbox.checked = true;
+    const statusElements = document.getElementsByName('status');
+    statusElements.forEach((status) => {
+        if (currentStatus.has(status.value)) {
+            status.checked = true;
         }
-        label.innerText = statusNameList[index];
-        div.append(checkbox, label);
-        statusListElement.append(div);
     });
 }
 function showAllTag(checkedTags) {

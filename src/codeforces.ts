@@ -28,39 +28,12 @@ function selectAndRadioButton() {
 }
 
 function showStatus(currentStatus: Set<string>) {
-    const statusIdList: string[] = ['ac', 'wa', 'nosubmit'];
-    const statusNameList: string[] = ['AC', 'WA', 'NoSubmit'];
-    const statusClass = ['accepted', 'wronganswer', 'nosubmit'];
+    const statusElements: NodeListOf<HTMLInputElement> = document.getElementsByName('status') as NodeListOf<HTMLInputElement>;
 
-    const statusListElement: HTMLDivElement = document.getElementById('status-list') as HTMLDivElement;
-
-    statusIdList.forEach((statusId: string, index: number) => {
-        const div: HTMLDivElement = document.createElement('div');
-
-        const checked: boolean = currentStatus.has(statusId);
-
-        const active: string = checked ? ' active' : '';
-        div.setAttribute('class', `form-check form-check-inline ${active} ${statusClass[index]}`);
-
-        const label: HTMLLabelElement = document.createElement('label');
-        label.setAttribute('class', 'form-check-label');
-        label.setAttribute('for', `status-${statusId}`);
-
-        const checkbox: HTMLInputElement = document.createElement('input');
-        checkbox.setAttribute('type', 'checkbox');
-        checkbox.setAttribute('id', `status-${statusId}`);
-        checkbox.setAttribute('class', 'form-check-input');
-        checkbox.setAttribute('name', 'status');
-        checkbox.value = statusId;
-
-        if (checked) {
-            checkbox.checked = true;
+    statusElements.forEach((status: HTMLInputElement) => {
+        if (currentStatus.has(status.value)) {
+            status.checked = true;
         }
-
-        label.innerText = statusNameList[index];
-
-        div.append(checkbox, label);
-        statusListElement.append(div);
     });
 }
 
