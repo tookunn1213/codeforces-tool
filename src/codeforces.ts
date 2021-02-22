@@ -83,7 +83,7 @@ interface Problem {
     tags: string[],
 }
 
-function fetchProblems() {
+function fetchProblems(): Promise<any> {
     return new Promise((resolve, reject) => {
         const xhr: XMLHttpRequest = new XMLHttpRequest();
 
@@ -107,7 +107,7 @@ interface ProblemStatistics {
     solvedCount: number,
 }
 
-function fetchProblemStatistics() {
+function fetchProblemStatistics(): Promise<any> {
     return new Promise((resolve, reject) => {
         const xhr: XMLHttpRequest = new XMLHttpRequest();
 
@@ -125,7 +125,7 @@ function fetchProblemStatistics() {
     });
 }
 
-function fetchAccepted(handle: string) {
+function fetchAccepted(handle: string): Promise<any> {
     return new Promise((resolve, reject) => {
         const xhr: XMLHttpRequest = new XMLHttpRequest();
 
@@ -239,13 +239,13 @@ function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted:
             return;
         }
 
-        const matched = matchTags(tagParams, tags, tagMode);
+        const matched: boolean = matchTags(tagParams, tags, tagMode);
 
         if (!matched && tags.length > 0) {
             return;
         }
 
-        let color = '';
+        let color: string = '';
         if (!accepted.has(id + index)) {
             color = '';
         } else if (accepted.get(id + index) === 'OK') {
@@ -266,25 +266,25 @@ function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted:
             return;
         }
 
-        const tr = document.createElement('tr');
+        const tr: HTMLTableRowElement = document.createElement('tr');
         tr.setAttribute('class', color);
 
-        const td1 = document.createElement('td');
-        const a1 = document.createElement('a');
+        const td1: HTMLTableDataCellElement = document.createElement('td');
+        const a1: HTMLAnchorElement = document.createElement('a');
         a1.setAttribute('href', problemURL + id + '/' + index);
         a1.setAttribute('target', '_blank');
         a1.innerText = id + '-' + index;
         td1.append(a1);
 
-        const td2 = document.createElement('td');
-        const a2 = document.createElement('a');
+        const td2: HTMLTableDataCellElement = document.createElement('td');
+        const a2: HTMLAnchorElement = document.createElement('a');
         a2.setAttribute('href', problemURL + id + '/' + index);
         a2.setAttribute('target', '_blank');
         a2.innerText = name;
         td2.append(a2);
 
-        const td3 = document.createElement('td');
-        const a3 = document.createElement('a');
+        const td3: HTMLTableDataCellElement = document.createElement('td');
+        const a3: HTMLAnchorElement = document.createElement('a');
         a3.setAttribute('href', statusURL + id + '/problem' + index);
         a3.setAttribute('target', '_blank');
         a3.innerText = solved.toString();
@@ -322,6 +322,7 @@ function showProblems(apiParams: APIParam, checkedStatus: Set<string>, tagParams
 
     let problems: Problem[] = [];
     let statistics: ProblemStatistics[] = [];
+
     Promise.resolve().then(() => {
         return fetchProblems();
     }).then((fetchedProblems: any) => {
@@ -335,30 +336,22 @@ function showProblems(apiParams: APIParam, checkedStatus: Set<string>, tagParams
     }).then(() => {
         let accepted: Map<string, string> = new Map();
         if (apiParams.handle) {
-            Promise.resolve().then(() => {
+            Promise.resolve().then((): Promise<any> => {
                 return fetchAccepted(apiParams.handle);
-            }).then((fetchedAccepted: any) => {
-                const ok = fetchedAccepted['status'] === 'OK';
+            }).then((fetchedAccepted: any): Promise<any> => {
+                const ok: boolean = fetchedAccepted['status'] === 'OK';
                 accepted = ok ? getAccepted(fetchedAccepted) : new Map();
 
                 return Promise.resolve();
             }).then(() => {
                 const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode)
-
-                const tableBody: HTMLElement | null = document.getElementById('table-body');
-
-                if (tableBody !== null) {
-                    tableBody.append(...trList);
-                }
+                const tableBody: HTMLTableSectionElement= document.getElementById('table-body') as HTMLTableSectionElement;
+                tableBody.append(...trList);
             });
         } else {
             const trList: HTMLTableRowElement[] = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode)
-
-            const tableBody: HTMLElement | null = document.getElementById('table-body');
-
-            if (tableBody !== null) {
-                tableBody.append(...trList);
-            }
+            const tableBody: HTMLTableSectionElement = document.getElementById('table-body') as HTMLTableSectionElement;
+            tableBody.append(...trList);
         }
     });
 }
@@ -461,10 +454,10 @@ init();
 const searchButton: HTMLButtonElement = document.getElementById('search-btn') as HTMLButtonElement;
 
 searchButton.onclick = () => {
-    const handle = (document.getElementById('handle') as HTMLInputElement).value;
-    const tagMode = getTagMode();
-    const tagParams = makeTagName();
-    const status = getStatus();
+    const handle: string = (document.getElementById('handle') as HTMLInputElement).value;
+    const tagMode: string = getTagMode();
+    const tagParams: string = makeTagName();
+    const status: string = getStatus();
 
     window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`;
 };

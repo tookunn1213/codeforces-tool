@@ -235,17 +235,13 @@ function showProblems(apiParams, checkedStatus, tagParams, tagMode) {
             }).then(() => {
                 const trList = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode);
                 const tableBody = document.getElementById('table-body');
-                if (tableBody !== null) {
-                    tableBody.append(...trList);
-                }
+                tableBody.append(...trList);
             });
         }
         else {
             const trList = getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode);
             const tableBody = document.getElementById('table-body');
-            if (tableBody !== null) {
-                tableBody.append(...trList);
-            }
+            tableBody.append(...trList);
         }
     });
 }
