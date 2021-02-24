@@ -137,7 +137,7 @@ function fetchAccepted(handle: string): Promise<any> {
             reject();
         }
 
-        xhr.open('GET', 'http://codeforces.com/api/user.status?handle=' + handle);
+        xhr.open('GET', 'https://codeforces.com/api/user.status?handle=' + handle);
         xhr.send();
     });
 }
@@ -354,14 +354,9 @@ function showProblems(apiParams: APIParam, checkedStatus: Set<string>, tagParams
     });
 }
 
-function escapeSelector(str: string): string {
-    return str.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
-}
-
 function checkTags(tags: Set<string>) {
     tags.forEach((tag: string) => {
-        const escapedTag: string = escapeSelector(tag);
-        const tagElement: HTMLInputElement = document.getElementById('tag-' + escapedTag) as HTMLInputElement;
+        const tagElement: HTMLInputElement = document.getElementById('tag-' + tag) as HTMLInputElement;
         tagElement.checked = true;
     });
 }
@@ -462,5 +457,5 @@ searchButton.onclick = () => {
     const tagParams: string = makeTagName();
     const status: string = getStatus();
 
-    window.location.href = window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`;
+    window.location.href = encodeURI(window.location.href.split('?')[0] + `?handle=${handle}&tag_mode=${tagMode}&tagName=${tagParams}&status=${status}`);
 };
