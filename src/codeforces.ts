@@ -197,6 +197,10 @@ function getAccepted(json: any): Map<string, string> {
 }
 
 function matchTags(tagParams: Set<string>, tags: string[], tagMode: string) {
+    if (tagParams.size === 0 && tags.length === 0) {
+        return true;
+    }
+
     if (tagMode === 'and') {
         let ok = true;
 
@@ -235,13 +239,7 @@ function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted:
         const solved: number = statistics[i].solvedCount;
         const tags: string[] = problem.tags;
 
-        if (tagParams.size > 0 && tags.length === 0) {
-            return;
-        }
-
-        const matched: boolean = matchTags(tagParams, tags, tagMode);
-
-        if (!matched && tags.length > 0) {
+        if (!matchTags(tagParams, tags, tagMode)) {
             return;
         }
 
@@ -397,19 +395,24 @@ function init() {
     const handleElement: HTMLInputElement = document.getElementById('handle') as HTMLInputElement;
     handleElement.value = params.get('handle') ?? '';
 
-    const checkedTags: Set<string> = new Set<string>();
-    if (params.has('tagName')) {
-        const tagName: string = params.get('tagName') ?? '';
-        tagName.split(',')
-            .forEach((tag: string) => {
-                checkedTags.add(tag);
-            });
-    }
-
+    const checkedTags: Set<string> = getCheckedTags(params.get('tagName')?? '');
     const checkedStatus: Set<string> = new Set<string>((params.get('status') ?? '').split(','));
+
     showStatus(checkedStatus);
     showAllTag(checkedTags);
     showProblems(apiParams, checkedStatus, checkedTags, tagMode);
+}
+
+function getCheckedTags(tagName: string): Set<string> {
+    const tags: Set<string> = new Set();
+    if (tagName.length > 0) {
+        tagName.split(',')
+            .forEach((tag: string) => {
+                tags.add(tag);
+            });
+    }
+
+    return tags;
 }
 
 function getTagMode(): string {
