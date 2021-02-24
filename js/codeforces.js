@@ -113,6 +113,9 @@ function getAccepted(json) {
     return accepted;
 }
 function matchTags(tagParams, tags, tagMode) {
+    if (tagParams.size === 0 && tags.length === 0) {
+        return true;
+    }
     if (tagMode === 'and') {
         let ok = true;
         if (tagParams.size !== tags.length) {
@@ -143,11 +146,7 @@ function getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMo
         const index = problem.index;
         const solved = statistics[i].solvedCount;
         const tags = problem.tags;
-        if (tagParams.size > 0 && tags.length === 0) {
-            return;
-        }
-        const matched = matchTags(tagParams, tags, tagMode);
-        if (!matched && tags.length > 0) {
+        if (!matchTags(tagParams, tags, tagMode)) {
             return;
         }
         let color = '';
@@ -275,18 +274,21 @@ function init() {
     }
     const handleElement = document.getElementById('handle');
     handleElement.value = (_c = params.get('handle')) !== null && _c !== void 0 ? _c : '';
-    const checkedTags = new Set();
-    if (params.has('tagName')) {
-        const tagName = (_d = params.get('tagName')) !== null && _d !== void 0 ? _d : '';
-        tagName.split(',')
-            .forEach((tag) => {
-            checkedTags.add(tag);
-        });
-    }
+    const checkedTags = getCheckedTags((_d = params.get('tagName')) !== null && _d !== void 0 ? _d : '');
     const checkedStatus = new Set(((_e = params.get('status')) !== null && _e !== void 0 ? _e : '').split(','));
     showStatus(checkedStatus);
     showAllTag(checkedTags);
     showProblems(apiParams, checkedStatus, checkedTags, tagMode);
+}
+function getCheckedTags(tagName) {
+    const tags = new Set();
+    if (tagName.length > 0) {
+        tagName.split(',')
+            .forEach((tag) => {
+            tags.add(tag);
+        });
+    }
+    return tags;
 }
 function getTagMode() {
     const radioOrTag = document.getElementById('or-radio-btn');
