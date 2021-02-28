@@ -227,8 +227,8 @@ function matchTags(tagParams: Set<string>, tags: string[], tagMode: string) {
 }
 
 function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted: Map<string, string>, checkedStatus: Set<string>, tagParams: Set<string>, tagMode: string): HTMLTableRowElement[] {
-    const problemURL = "http://codeforces.com/problemset/problem/";
-    const statusURL = "http://codeforces.com/problemset/status/";
+    const problemURL = "https://codeforces.com/problemset/problem/";
+    const statusURL = "https://codeforces.com/problemset/status/";
 
     const trList: HTMLTableRowElement[] = [];
 
@@ -283,7 +283,7 @@ function getRows(problems: Problem[], statistics: ProblemStatistics[], accepted:
 
         const td3: HTMLTableDataCellElement = document.createElement('td');
         const a3: HTMLAnchorElement = document.createElement('a');
-        a3.setAttribute('href', statusURL + id + '/problem' + index);
+        a3.setAttribute('href', statusURL + id + '/problem/' + index);
         a3.setAttribute('target', '_blank');
         a3.innerText = solved.toString();
         td3.append(a3);
