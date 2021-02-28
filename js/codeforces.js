@@ -137,8 +137,8 @@ function matchTags(tagParams, tags, tagMode) {
     }
 }
 function getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMode) {
-    const problemURL = "http://codeforces.com/problemset/problem/";
-    const statusURL = "http://codeforces.com/problemset/status/";
+    const problemURL = "https://codeforces.com/problemset/problem/";
+    const statusURL = "https://codeforces.com/problemset/status/";
     const trList = [];
     problems.forEach((problem, i) => {
         const name = problem.name;
@@ -184,7 +184,7 @@ function getRows(problems, statistics, accepted, checkedStatus, tagParams, tagMo
         td2.append(a2);
         const td3 = document.createElement('td');
         const a3 = document.createElement('a');
-        a3.setAttribute('href', statusURL + id + '/problem' + index);
+        a3.setAttribute('href', statusURL + id + '/problem/' + index);
         a3.setAttribute('target', '_blank');
         a3.innerText = solved.toString();
         td3.append(a3);
@@ -244,12 +244,8 @@ function showProblems(apiParams, checkedStatus, tagParams, tagMode) {
         }
     });
 }
-// function escapeSelector(str: string): string {
-//     return str.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
-// }
 function checkTags(tags) {
     tags.forEach((tag) => {
-        // const escapedTag: string = escapeSelector(tag);
         const tagElement = document.getElementById('tag-' + tag);
         tagElement.checked = true;
     });
