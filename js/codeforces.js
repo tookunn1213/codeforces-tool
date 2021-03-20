@@ -299,9 +299,14 @@ function getTagMode() {
 function makeTagName() {
     const tagList = [];
     const tagElements = document.getElementsByClassName('tag');
+<<<<<<< HEAD
     for (let i = 0; i < tagElements.length; i++) {
         let element = tagElements.item(i);
         if (element === null || element === void 0 ? void 0 : element.checked) {
+=======
+    for (const element of tagElements) {
+        if (element.checked) {
+>>>>>>> 29a7ac7db077472a0a64525e61d4b5df25185d8c
             tagList.push(element.value);
         }
     }
