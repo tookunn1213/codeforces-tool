@@ -25,13 +25,9 @@
     "gulp-cli": "^2.3.0",
     "gulp-sass": "^4.1.0",
     "http-server": "^0.12.3",
-<<<<<<< HEAD
     "npm-check-updates": "^11.3.0",
     "typescript": "^4.2.3",
     "ecstatic": ">=4.1.4",
     "yargs-parser": ">=20.2.7"
-=======
-    "typescript": "^4.2.2"
->>>>>>> 29a7ac7db077472a0a64525e61d4b5df25185d8c
   }
 }
