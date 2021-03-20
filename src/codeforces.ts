@@ -425,8 +425,9 @@ function makeTagName(): string {
     const tagList: string[] = [];
     const tagElements: HTMLCollectionOf<HTMLInputElement> = document.getElementsByClassName('tag') as HTMLCollectionOf<HTMLInputElement>;
 
-    for (const element of tagElements) {
-        if (element.checked) {
+    for (let i = 0; i < tagElements.length; i++) {
+        let element = tagElements.item(i);
+        if (element?.checked) {
             tagList.push(element.value);
         }
     }
